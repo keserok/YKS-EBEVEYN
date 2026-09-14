@@ -1,37 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Sparkles,
   Clock,
   RotateCcw,
   CheckCircle2,
   ShieldCheck,
   Award,
   ArrowRight,
-  Zap,
   Lock,
   Star,
-  MessageCircle,
   X,
-  CreditCard,
   AlertTriangle,
   HeartHandshake
 } from "lucide-react";
-import confetti from "canvas-confetti";
 import LegalModal from "./common/LegalModal";
 
 export default function ResultDossier({ leadData, packageResult, onRestart }) {
-  useEffect(() => {
-    try {
-      confetti({
-        particleCount: 80,
-        spread: 80,
-        origin: { y: 0.5 },
-        colors: ["#D4AF37", "#F5E6B3", "#C5A059", "#FFFFFF"]
-      });
-    } catch {}
-  }, []);
-
   // 15-minute countdown timer
   const [timeLeft, setTimeLeft] = useState(15 * 60);
   useEffect(() => {
@@ -50,8 +34,6 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
   // Payment State
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [isPurchased, setIsPurchased] = useState(false);
-  const [, setIsLoadingPayment] = useState(false);
-  const [iyzicoFormHtml, setIyzicoFormHtml] = useState(null);
 
   // Legal Modal State
   const [legalModalOpen, setLegalModalOpen] = useState(false);
@@ -60,24 +42,8 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
   const [termsError, setTermsError] = useState(false);
 
   const parentName = leadData?.parentName || leadData?.agencyName || "Değerli Velimiz";
-  const phone = leadData?.phone || "";
   const studentBranch = leadData?.studentBranch || "12. Sınıf";
   const scorePercent = packageResult?.scorePercent || 70;
-
-  const whatsappMessage = encodeURIComponent(
-    `Merhaba, YKS Ebeveyn Değerlendirmesini tamamladım.\n\n` +
-    `👤 Ebeveyn: ${parentName}\n` +
-    `📞 Telefon: ${phone}\n` +
-    `🎓 Çocuğun Durumu: ${studentBranch}\n` +
-    `📊 Dirayet Skorum: %${scorePercent}\n` +
-    `🏷️ Arketip: ${packageResult?.title}\n\n` +
-    `"Kaostan Düzene: YKS Ebeveyn Rehberi" e-kitabını lansmana özel 299 TL (499 TL yerine %40 indirimli) fiyattan satın almak ve PDF protokollerimi teslim almak istiyorum.`
-  );
-  const whatsappUrl = `https://wa.me/905000000000?text=${whatsappMessage}`;
-
-  const handleOpenWhatsApp = () => {
-    window.open(whatsappUrl, "_blank");
-  };
 
   const triggerHaptic = (duration = 15) => {
     if (typeof window !== "undefined" && window.navigator?.vibrate) {
@@ -87,28 +53,9 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
     }
   };
 
-  // Start checkout flow with İyzico API
-  const handleStartCheckout = async () => {
+  const handleStartCheckout = () => {
     triggerHaptic(20);
     setShowCheckoutModal(true);
-    setIsLoadingPayment(true);
-
-    try {
-      const res = await fetch("/api/initialize-checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ parentName, phone, studentBranch })
-      });
-      const data = await res.json();
-
-      if (data?.checkoutFormContent) {
-        setIyzicoFormHtml(data.checkoutFormContent);
-      }
-    } catch {
-      // Fallback to direct modal simulation
-    } finally {
-      setIsLoadingPayment(false);
-    }
   };
 
   const SHOPIER_URL = "https://www.shopier.com/50831713";
@@ -121,13 +68,6 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
     triggerHaptic(25);
     window.open(SHOPIER_URL, "_blank");
     setIsPurchased(true);
-    try {
-      confetti({
-        particleCount: 100,
-        spread: 90,
-        origin: { y: 0.5 }
-      });
-    } catch {}
   };
 
   const openLegal = (tabId) => {
@@ -144,8 +84,8 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
         className="mb-5 flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-2xl bg-gold/15 border border-gold/40 text-xs sm:text-sm font-mono shadow-lg"
       >
         <div className="flex items-center gap-2 text-white font-medium">
-          <Sparkles className="w-4 h-4 text-gold shrink-0 animate-pulse" />
-          <span>Analiz Tamamlandı: Teşhis Raporunuz Hazır</span>
+          <ShieldCheck className="w-4 h-4 text-gold shrink-0 animate-pulse" />
+          <span>Klinik Doğrulama Tamamlandı • Kişisel Analiz Kilidi Açıldı</span>
         </div>
         <div className="flex items-center gap-2 bg-black/60 px-3.5 py-1.5 rounded-xl border border-gold/30 text-white">
           <Clock className="w-4 h-4 text-gold" />
@@ -161,6 +101,17 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         className="luxury-glass p-5 sm:p-10 rounded-3xl border border-gold/40 shadow-[0_25px_80px_-20px_rgba(0,0,0,0.95)] relative overflow-hidden"
       >
+        {/* Psychological Clinical Scanline Laser Reveal (1 pass on mount) */}
+        <motion.div
+          initial={{ top: "-5%", opacity: 0 }}
+          animate={{
+            top: ["-5%", "110%"],
+            opacity: [0, 0.9, 1, 0.8, 0]
+          }}
+          transition={{ duration: 1.6, ease: "easeInOut", times: [0, 0.1, 0.5, 0.9, 1] }}
+          className="absolute inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-gold-shimmer to-transparent shadow-[0_0_20px_rgba(255,224,130,0.9)] pointer-events-none z-30"
+        />
+
         <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-gold to-transparent opacity-90" />
 
         {/* Header */}
@@ -184,8 +135,22 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
         {/* 2.1 SKOR VE ARKETİP ALANI */}
         <div className="my-6 sm:my-8 grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
           {/* Skor Dairesi */}
-          <div className="lg:col-span-4 flex flex-col items-center justify-center p-6 rounded-3xl bg-black/60 border border-gold/30 text-center">
-            <div className="relative w-40 h-40 flex items-center justify-center mb-2">
+          <div className="lg:col-span-4 flex flex-col items-center justify-center p-6 rounded-3xl bg-black/60 border border-gold/30 text-center relative overflow-hidden">
+            {/* Clinical Radar Waves behind Score */}
+            <motion.div
+              initial={{ scale: 0.85, opacity: 0.8 }}
+              animate={{ scale: [0.85, 1.35, 1.45], opacity: [0.8, 0.25, 0] }}
+              transition={{ duration: 2.4, repeat: Infinity, ease: "easeOut" }}
+              className="absolute w-36 h-36 rounded-full border border-gold/50 pointer-events-none"
+            />
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0.5 }}
+              animate={{ scale: [0.95, 1.25, 1.35], opacity: [0.5, 0.15, 0] }}
+              transition={{ duration: 2.4, delay: 0.7, repeat: Infinity, ease: "easeOut" }}
+              className="absolute w-36 h-36 rounded-full border border-gold/30 pointer-events-none"
+            />
+
+            <div className="relative w-40 h-40 flex items-center justify-center mb-2 z-10">
               <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
                 <circle
                   cx="60"
@@ -450,26 +415,14 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
               </button>
             </div>
 
-            <div className="mt-4">
-              <button
-                type="button"
-                onClick={handleOpenWhatsApp}
-                className="inline-flex items-center gap-2 text-sm text-slate-300 hover:text-gold transition-colors cursor-pointer"
-              >
-                <MessageCircle className="w-4 h-4 text-emerald-400" />
-                <span>veya WhatsApp ile Satın Al & Danışmana Sor</span>
-              </button>
-            </div>
-
-            <div className="pt-6 mt-6 border-t border-white/10 flex flex-wrap items-center justify-center gap-5 text-xs text-slate-400">
-              <div className="flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <span>İyzico 256-Bit SSL 3D Secure</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Zap className="w-4 h-4 text-gold" />
-                <span>Anında Otomatik PDF İndirme</span>
-              </div>
+            <div className="pt-6 mt-6 border-t border-white/10 flex flex-wrap items-center justify-center gap-5 text-xs text-slate-400 font-mono">
+              <span>3D Secure</span>
+              <span>•</span>
+              <span>256-Bit SSL</span>
+              <span>•</span>
+              <span>Shopier Güvencesi</span>
+              <span>•</span>
+              <span>30 Gün İade</span>
             </div>
           </div>
 
@@ -605,7 +558,7 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
               </div>
               <div className="px-3 py-1 rounded-lg bg-white/[0.04] border border-white/10 flex items-center gap-1.5 text-emerald-400 text-xs font-mono">
                 <ShieldCheck className="w-4 h-4" />
-                <span>iyzico Korumalı Ödeme</span>
+                <span>Shopier Güvenli Ödeme</span>
               </div>
               <div className="px-3 py-1 rounded-lg bg-white/[0.04] border border-white/10 flex items-center gap-1.5 text-gold text-xs font-mono">
                 <Lock className="w-3.5 h-3.5" />
@@ -614,226 +567,163 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
             </div>
 
             <span className="text-[10px] text-slate-500 font-mono">
-              6502 Sayılı Tüketicinin Korunması Hakkında Kanun, Mesafeli Sözleşmeler Yönetmeliği ve İyzico Güvenli Ödeme Standartlarına %100 Uygundur.
+              6502 Sayılı Tüketicinin Korunması Hakkında Kanun, Mesafeli Sözleşmeler Yönetmeliği ve Shopier Güvenli Ödeme Standartlarına %100 Uygundur.
             </span>
           </div>
         </div>
       </motion.div>
 
-      {/* 4. MODAL: İYZİCO ÖDEME VE İNDİRME */}
+      {/* 4. MODAL: GÜVENLİ SHOPIER ÖDEME */}
       <AnimatePresence>
         {showCheckoutModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-xl overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="w-full max-w-lg luxury-glass p-6 sm:p-8 rounded-3xl border border-gold/50 shadow-2xl relative max-h-[90vh] overflow-y-auto"
+              className="w-full max-w-[420px] luxury-glass p-6 sm:p-8 rounded-3xl border border-gold/30 shadow-[0_20px_70px_rgba(0,0,0,0.95)] relative text-center flex flex-col my-auto"
             >
+              {/* Close Button - 44px touch target */}
               <button
                 type="button"
                 onClick={() => setShowCheckoutModal(false)}
-                className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:text-white cursor-pointer"
+                className="absolute top-4 right-4 w-11 h-11 rounded-full bg-white/[0.06] hover:bg-white/10 active:scale-95 flex items-center justify-center text-slate-400 hover:text-white cursor-pointer transition-all"
+                aria-label="Kapat"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
 
               {!isPurchased ? (
                 <div>
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-gold/20 flex items-center justify-center text-gold border border-gold/40">
-                      <CreditCard className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h3 className="font-serif text-xl sm:text-2xl font-medium text-white">
-                        Shopier 3D Secure Güvenli Ödeme
-                      </h3>
-                      <span className="text-xs font-mono text-gold-light font-bold">
-                        299 ₺ (Lansman Fırsatı)
-                      </span>
-                    </div>
+                  {/* Top Minimal Label */}
+                  <span className="font-mono text-[11px] tracking-epic text-gold uppercase block mb-3 font-semibold">
+                    KAOSTAN DÜZENE
+                  </span>
+
+                  {/* Title & Subtitle */}
+                  <h3 className="font-serif text-2xl sm:text-3xl font-medium text-white tracking-tight mb-2">
+                    YKS Ebeveyn Rehberi
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-400 font-light max-w-xs mx-auto mb-6 leading-relaxed">
+                    Klinik e-kitap, kriz yönetimi ve yazdırılabilir protokoller
+                  </p>
+
+                  {/* Pricing Display */}
+                  <div className="flex items-center justify-center gap-3 mb-6">
+                    <span className="text-2xl text-slate-500 line-through font-serif decoration-rose-500/80">
+                      499 ₺
+                    </span>
+                    <span className="text-5xl font-serif font-bold text-gold drop-shadow-[0_0_25px_rgba(212,175,55,0.4)]">
+                      299 ₺
+                    </span>
                   </div>
 
-                  {/* If İyzico rendered HTML exists, show it */}
-                  {iyzicoFormHtml ? (
-                    <div
-                      id="iyzipay-checkout-form"
-                      className="my-4 bg-white p-3 rounded-2xl text-black"
-                      dangerouslySetInnerHTML={{ __html: iyzicoFormHtml }}
-                    />
-                  ) : (
-                    <>
-                      <div className="p-4 rounded-2xl bg-black/50 border border-white/10 mb-4 space-y-2 text-xs sm:text-sm text-slate-300">
-                        <div className="flex justify-between">
-                          <span>Ürün:</span>
-                          <strong className="text-white">Kaostan Düzene (PDF E-Kitap + Bonuslar)</strong>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Teslimat:</span>
-                          <span className="text-emerald-400 font-mono font-medium">Anında Dijital İndirme (0 TL)</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Normal Fiyat:</span>
-                          <span className="line-through text-slate-400">499 ₺</span>
-                        </div>
-                        <div className="flex justify-between text-gold font-bold text-base pt-2 border-t border-white/10">
-                          <span>Ödenecek Tutar (KDV Dahil):</span>
-                          <span className="font-mono text-xl">299 ₺</span>
-                        </div>
-                      </div>
-
-                      {/* 6502 Sayılı Tüketici Kanunu & Zorunlu Sözleşme Onayı */}
-                      <div className="mb-4">
-                        <label className={`flex items-start gap-3 p-3.5 rounded-2xl border transition-all cursor-pointer text-xs select-none ${
-                          termsError 
-                            ? "bg-rose-950/30 border-rose-500/70" 
-                            : agreedToTerms 
-                              ? "bg-gold/10 border-gold/40 text-slate-200" 
-                              : "bg-black/60 border-white/15 text-slate-300 hover:border-gold/40"
-                        }`}>
-                          <input
-                            type="checkbox"
-                            checked={agreedToTerms}
-                            onChange={(e) => {
-                              setAgreedToTerms(e.target.checked);
-                              if (termsError) setTermsError(false);
-                            }}
-                            className="mt-0.5 w-4 h-4 rounded border-gold/40 text-gold focus:ring-gold bg-black/80 cursor-pointer accent-gold shrink-0"
-                          />
-                          <span className="leading-relaxed">
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                openLegal("onbilgi");
-                              }}
-                              className="text-gold underline hover:text-gold-light font-medium cursor-pointer"
-                            >
-                              Ön Bilgilendirme Formu
-                            </button>
-                            'nu ve{" "}
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                openLegal("mesafeli");
-                              }}
-                              className="text-gold underline hover:text-gold-light font-medium cursor-pointer"
-                            >
-                              Mesafeli Satış Sözleşmesi
-                            </button>
-                            'ni okudum, onaylıyorum.
-                          </span>
-                        </label>
-                        {termsError && (
-                          <p className="text-[11px] text-rose-400 font-semibold mt-1.5 text-center animate-shake">
-                            ⚠️ Devam edebilmek için lütfen sözleşmeleri onaylayınız.
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="space-y-3">
+                  {/* Minimal Legal Terms Checkbox */}
+                  <div className="mb-6 text-left">
+                    <label
+                      className={`flex items-start gap-3 p-3.5 rounded-2xl border transition-all cursor-pointer text-xs select-none ${
+                        termsError
+                          ? "bg-rose-950/20 border-rose-500/60 text-rose-200"
+                          : agreedToTerms
+                          ? "bg-gold/[0.06] border-gold/40 text-slate-200"
+                          : "bg-white/[0.02] border-white/10 text-slate-400 hover:border-white/20"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={agreedToTerms}
+                        onChange={(e) => {
+                          setAgreedToTerms(e.target.checked);
+                          if (termsError) setTermsError(false);
+                        }}
+                        className="mt-0.5 w-4 h-4 rounded border-gold/40 text-gold focus:ring-gold bg-black/80 cursor-pointer accent-gold shrink-0"
+                      />
+                      <span className="leading-relaxed">
                         <button
                           type="button"
-                          onClick={handleShopierPurchase}
-                          className={`w-full py-4.5 rounded-2xl font-bold text-sm sm:text-base tracking-wider uppercase shadow-xl transition-all flex items-center justify-center gap-2.5 ${
-                            agreedToTerms
-                              ? "bg-gradient-to-r from-gold via-gold-shimmer to-gold text-obsidian shadow-gold/30 hover:shadow-gold/50 cursor-pointer active:scale-98 hover:scale-[1.01]"
-                              : "bg-white/10 text-slate-400 border border-white/10 cursor-pointer hover:border-white/25"
-                          }`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openLegal("onbilgi");
+                          }}
+                          className="text-gold underline hover:text-gold-light font-medium cursor-pointer"
                         >
-                          <CreditCard className="w-5 h-5 text-obsidian" />
-                          <span>Shopier ile Kartla Güvenli Öde (299 ₺)</span>
-                          <ArrowRight className="w-4 h-4 text-obsidian" />
-                        </button>
-
+                          Ön Bilgilendirme
+                        </button>{" "}
+                        ve{" "}
                         <button
                           type="button"
-                          onClick={handleOpenWhatsApp}
-                          className="w-full py-3.5 rounded-2xl bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 font-semibold text-xs sm:text-sm tracking-wider uppercase hover:bg-emerald-600/30 cursor-pointer transition-all flex items-center justify-center gap-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openLegal("mesafeli");
+                          }}
+                          className="text-gold underline hover:text-gold-light font-medium cursor-pointer"
                         >
-                          <MessageCircle className="w-4 h-4 text-emerald-400" />
-                          <span>WhatsApp ile Havale / EFT ile Al</span>
+                          Mesafeli Satış Sözleşmesi
                         </button>
-                      </div>
-
-                      {/* Shopier, Visa, Mastercard, Troy, 256-Bit SSL Rozetleri */}
-                      <div className="pt-4 mt-4 border-t border-white/10 flex flex-wrap items-center justify-center gap-2 text-[10px] text-slate-400 font-mono">
-                        <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-bold tracking-wider">VISA</span>
-                        <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-bold">Mastercard</span>
-                        <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-red-400 font-bold tracking-wider">TROY</span>
-                        <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-emerald-400 flex items-center gap-1">
-                          <ShieldCheck className="w-3 h-3" />
-                          Shopier 3D Secure
-                        </span>
-                        <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-gold flex items-center gap-1">
-                          <Lock className="w-3 h-3" />
-                          256-Bit SSL
-                        </span>
-                      </div>
-
-                      <p className="text-[11px] text-slate-400 text-center mt-3 leading-relaxed">
-                        Ödemeniz Shopier 256-bit SSL korumasıyla gerçekleşir. Kılavuz cihazınıza anında indirilir.
+                        'ni onaylıyorum.
+                      </span>
+                    </label>
+                    {termsError && (
+                      <p className="text-[11px] text-rose-400 text-center mt-1.5 font-medium">
+                        Lütfen devam etmek için sözleşmeyi onaylayınız.
                       </p>
-                    </>
-                  )}
+                    )}
+                  </div>
+
+                  {/* Primary CTA - Shopier Only! */}
+                  <button
+                    type="button"
+                    onClick={handleShopierPurchase}
+                    className={`w-full py-4.5 rounded-2xl font-bold text-sm sm:text-base tracking-widest uppercase transition-all shadow-xl active:scale-98 cursor-pointer ${
+                      agreedToTerms
+                        ? "bg-gradient-to-r from-gold via-gold-shimmer to-gold text-obsidian shadow-[0_10px_35px_rgba(212,175,55,0.4)] hover:shadow-[0_15px_45px_rgba(212,175,55,0.6)]"
+                        : "bg-white/[0.08] text-slate-500 border border-white/10 hover:border-white/20"
+                    }`}
+                  >
+                    Shopier ile Güvenli Öde (299 ₺)
+                  </button>
+
+                  {/* Minimal Security Footer */}
+                  <div className="flex items-center justify-center gap-2.5 pt-5 text-[11px] font-mono text-slate-400">
+                    <span>3D Secure</span>
+                    <span>•</span>
+                    <span>256-Bit SSL</span>
+                    <span>•</span>
+                    <span>30 Gün İade</span>
+                  </div>
                 </div>
               ) : (
-                <div className="text-center py-4 space-y-4">
-                  <div className="w-16 h-16 rounded-full bg-gold/20 border border-gold/50 flex items-center justify-center text-gold mx-auto shadow-[0_0_30px_rgba(212,175,55,0.3)]">
-                    <ShieldCheck className="w-8 h-8" />
-                  </div>
+                <div className="text-center py-6 space-y-4">
+                  <span className="font-mono text-[11px] tracking-epic text-gold uppercase block font-semibold">
+                    ÖDEME SAYFASI
+                  </span>
 
-                  <h3 className="font-serif text-2xl sm:text-3xl text-white font-medium">
-                    Shopier Güvenli Ödeme Ekranı Açıldı
+                  <h3 className="font-serif text-2xl sm:text-3xl font-medium text-white tracking-tight">
+                    Shopier Ekranı Açıldı
                   </h3>
 
-                  <div className="p-4 rounded-2xl bg-black/50 border border-white/10 text-left space-y-3 text-xs sm:text-sm text-slate-300">
-                    <div className="flex items-start gap-2.5">
-                      <div className="w-5 h-5 rounded-full bg-gold/20 text-gold flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
-                        1
-                      </div>
-                      <p>
-                        <strong className="text-white">Ödemenizi Tamamlayın:</strong> Açılan resmi Shopier penceresinde kart bilgilerinizi girip 299 TL tutarındaki siparişinizi onaylayın.
-                      </p>
-                    </div>
+                  <p className="text-xs sm:text-sm text-slate-300 font-light max-w-xs mx-auto leading-relaxed">
+                    299 ₺ ödemenizi tamamladığınızda kılavuzunuz ve tüm protokoller SMS ve e-posta ile anında iletilecektir.
+                  </p>
 
-                    <div className="flex items-start gap-2.5">
-                      <div className="w-5 h-5 rounded-full bg-gold/20 text-gold flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
-                        2
-                      </div>
-                      <p>
-                        <strong className="text-white">Şifreli Teslimat:</strong> Ödemeniz onaylandığı anda Shopier tarafından telefonunuza <strong className="text-gold">SMS</strong> ve e-postanıza <strong className="text-gold">şifreli güvenli indirme bağlantısı</strong> gönderilecektir.
-                      </p>
-                    </div>
-
-                    <div className="flex items-start gap-2.5">
-                      <div className="w-5 h-5 rounded-full bg-gold/20 text-gold flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
-                        3
-                      </div>
-                      <p>
-                        <strong className="text-white">7/24 Destek Güvencesi:</strong> Herhangi bir aksaklık durumunda sipariş numaranız ile WhatsApp destek hattımızdan dosyanızı anında talep edebilirsiniz.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                  <div className="pt-3 space-y-2">
                     <button
                       type="button"
                       onClick={() => window.open(SHOPIER_URL, "_blank")}
-                      className="flex-1 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-gold via-gold-shimmer to-gold text-obsidian font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-lg hover:shadow-gold/40 cursor-pointer flex items-center justify-center gap-2"
+                      className="w-full py-4 rounded-2xl bg-gradient-to-r from-gold via-gold-shimmer to-gold text-obsidian font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-lg active:scale-98 cursor-pointer"
                     >
-                      <CreditCard className="w-4 h-4" />
-                      <span>Ödeme Sayfasını Tekrar Aç</span>
+                      Ödeme Sayfasına Dön
                     </button>
 
                     <button
                       type="button"
-                      onClick={handleOpenWhatsApp}
-                      className="flex-1 py-3.5 px-5 rounded-2xl bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 font-semibold text-xs sm:text-sm uppercase tracking-wider hover:bg-emerald-600/30 transition-all cursor-pointer flex items-center justify-center gap-2"
+                      onClick={() => {
+                        setShowCheckoutModal(false);
+                        setIsPurchased(false);
+                      }}
+                      className="text-xs text-slate-400 hover:text-white pt-2 inline-block cursor-pointer font-mono"
                     >
-                      <MessageCircle className="w-4 h-4 text-emerald-400" />
-                      <span>WhatsApp Destek</span>
+                      Pencereyi Kapat
                     </button>
                   </div>
                 </div>

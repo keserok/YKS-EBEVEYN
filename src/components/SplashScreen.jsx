@@ -127,7 +127,7 @@ export default function SplashScreen({ onStart }) {
           className="w-full sm:w-auto group relative inline-flex items-center justify-center gap-4 px-8 sm:px-14 py-4.5 sm:py-5 rounded-2xl bg-gradient-to-r from-gold via-gold-shimmer to-gold text-obsidian font-bold text-base sm:text-lg tracking-luxury uppercase transition-all duration-300 shadow-[0_15px_45px_rgba(212,175,55,0.35)] hover:shadow-[0_20px_60px_rgba(212,175,55,0.55)] cursor-pointer active:scale-95"
         >
           <span className="relative z-10 text-obsidian font-bold">
-            Testi Başlat & Karneni Gör
+            Testi Başlat
           </span>
           <div className="relative z-10 w-9 h-9 rounded-xl bg-black/15 flex items-center justify-center group-hover:translate-x-1 transition-transform">
             <ArrowRight className="w-5 h-5 text-obsidian" />

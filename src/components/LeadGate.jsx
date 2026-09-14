@@ -86,7 +86,7 @@ export default function LeadGate({ onProceed, onSecretAdminTrigger }) {
                   setParentName(e.target.value);
                   if (errorMsg) setErrorMsg("");
                 }}
-                placeholder="Örn: Ayşe Hanım veya Mehmet Bey"
+                placeholder="Örn: Ayşe Yılmaz veya Burak Berkan"
                 className="w-full pl-12 pr-4 py-4 rounded-2xl bg-black/60 border border-white/20 focus:border-gold focus:bg-black/80 text-base text-white placeholder-slate-500 outline-none transition-all shadow-inner"
                 autoFocus
               />
@@ -131,7 +131,7 @@ export default function LeadGate({ onProceed, onSecretAdminTrigger }) {
                 <option value="12. Sınıf - Eşit Ağırlık">12. Sınıf — Eşit Ağırlık</option>
                 <option value="Mezun Grubu - Sayısal">Mezun Grubu — Sayısal</option>
                 <option value="Mezun Grubu - Eşit Ağırlık">Mezun Grubu — Eşit Ağırlık</option>
-                <option value="11. Sınıf (YKS Hazırlık)">11. Sınıf (Hazırlık)</option>
+                <option value="11. Sınıf">11. Sınıf</option>
                 <option value="Sözel / Dil">Sözel / Yabancı Dil</option>
               </select>
             </div>
@@ -150,15 +150,15 @@ export default function LeadGate({ onProceed, onSecretAdminTrigger }) {
           <button
             type="submit"
             disabled={!isValid}
-            className={`w-full flex items-center justify-center gap-3 py-4.5 rounded-2xl font-bold text-base tracking-widest uppercase transition-all duration-300 mt-2 ${
+            className={`w-full flex items-center justify-center gap-3 py-5 sm:py-5.5 px-8 rounded-2xl sm:rounded-3xl font-bold text-lg sm:text-xl tracking-wider sm:tracking-widest uppercase transition-all duration-300 mt-3 active:scale-[0.98] ${
               isValid
-                ? "bg-gradient-to-r from-gold via-gold-shimmer to-gold text-obsidian shadow-[0_10px_35px_rgba(212,175,55,0.4)] hover:shadow-[0_15px_45px_rgba(212,175,55,0.6)] cursor-pointer active:scale-98"
+                ? "bg-[linear-gradient(110deg,#F59E0B,25%,#FEF08A,50%,#EAB308,75%,#F59E0B)] bg-[length:250%_100%] animate-shimmer text-obsidian shadow-[0_12px_45px_rgba(234,179,8,0.45)] hover:shadow-[0_18px_60px_rgba(234,179,8,0.7)] cursor-pointer"
                 : "bg-white/10 text-slate-500 cursor-not-allowed opacity-60"
             }`}
           >
-            <Lock className="w-5 h-5 text-obsidian" />
+            <Lock className="w-5 h-5 sm:w-6 sm:h-6 text-obsidian shrink-0" />
             <span>Karnemi & Raporumu Aç</span>
-            <ArrowRight className="w-5 h-5 text-obsidian" />
+            <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 text-obsidian shrink-0" />
           </button>
 
           <div className="flex items-center justify-center gap-2 pt-2 text-xs text-slate-400">
