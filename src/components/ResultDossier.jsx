@@ -10,7 +10,6 @@ import {
   ArrowRight,
   Zap,
   Lock,
-  Download,
   Star,
   MessageCircle,
   X,
@@ -781,42 +780,62 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
                 </div>
               ) : (
                 <div className="text-center py-4 space-y-4">
-                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center text-emerald-400 mx-auto shadow-[0_0_30px_rgba(16,185,129,0.3)]">
-                    <CheckCircle2 className="w-8 h-8" />
+                  <div className="w-16 h-16 rounded-full bg-gold/20 border border-gold/50 flex items-center justify-center text-gold mx-auto shadow-[0_0_30px_rgba(212,175,55,0.3)]">
+                    <ShieldCheck className="w-8 h-8" />
                   </div>
 
                   <h3 className="font-serif text-2xl sm:text-3xl text-white font-medium">
-                    Shopier Ödeme Sayfanız Açıldı!
+                    Shopier Güvenli Ödeme Ekranı Açıldı
                   </h3>
 
-                  <p className="text-sm text-slate-300 max-w-sm mx-auto leading-relaxed">
-                    Ödemenizi Shopier ekranında tamamladıktan sonra <strong>"Kaostan Düzene: YKS Ebeveyn Rehberi"</strong> PDF kılavuzunuzu hemen aşağıdan cihazınıza indirebilirsiniz:
-                  </p>
+                  <div className="p-4 rounded-2xl bg-black/50 border border-white/10 text-left space-y-3 text-xs sm:text-sm text-slate-300">
+                    <div className="flex items-start gap-2.5">
+                      <div className="w-5 h-5 rounded-full bg-gold/20 text-gold flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
+                        1
+                      </div>
+                      <p>
+                        <strong className="text-white">Ödemenizi Tamamlayın:</strong> Açılan resmi Shopier penceresinde kart bilgilerinizi girip 299 TL tutarındaki siparişinizi onaylayın.
+                      </p>
+                    </div>
 
-                  <div className="pt-2">
-                    <a
-                      href="/kaostan_duzene.pdf"
-                      download="Kaostan_Duzene_YKS_Ebeveyn_Rehberi.pdf"
-                      className="inline-flex items-center gap-2 px-8 py-4.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold text-sm sm:text-base tracking-wider uppercase shadow-xl hover:scale-105 transition-all cursor-pointer"
-                    >
-                      <Download className="w-5 h-5" />
-                      <span>PDF Rehberi Şimdi İndir</span>
-                    </a>
+                    <div className="flex items-start gap-2.5">
+                      <div className="w-5 h-5 rounded-full bg-gold/20 text-gold flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
+                        2
+                      </div>
+                      <p>
+                        <strong className="text-white">Şifreli Teslimat:</strong> Ödemeniz onaylandığı anda Shopier tarafından telefonunuza <strong className="text-gold">SMS</strong> ve e-postanıza <strong className="text-gold">şifreli güvenli indirme bağlantısı</strong> gönderilecektir.
+                      </p>
+                    </div>
+
+                    <div className="flex items-start gap-2.5">
+                      <div className="w-5 h-5 rounded-full bg-gold/20 text-gold flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
+                        3
+                      </div>
+                      <p>
+                        <strong className="text-white">7/24 Destek Güvencesi:</strong> Herhangi bir aksaklık durumunda sipariş numaranız ile WhatsApp destek hattımızdan dosyanızı anında talep edebilirsiniz.
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="pt-2">
+                  <div className="flex flex-col sm:flex-row gap-3 pt-2">
                     <button
                       type="button"
                       onClick={() => window.open(SHOPIER_URL, "_blank")}
-                      className="text-xs text-gold underline hover:text-gold-light font-mono cursor-pointer"
+                      className="flex-1 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-gold via-gold-shimmer to-gold text-obsidian font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-lg hover:shadow-gold/40 cursor-pointer flex items-center justify-center gap-2"
                     >
-                      Shopier ödeme sayfası açılmadıysa tekrar açmak için tıklayın
+                      <CreditCard className="w-4 h-4" />
+                      <span>Ödeme Sayfasını Tekrar Aç</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleOpenWhatsApp}
+                      className="flex-1 py-3.5 px-5 rounded-2xl bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 font-semibold text-xs sm:text-sm uppercase tracking-wider hover:bg-emerald-600/30 transition-all cursor-pointer flex items-center justify-center gap-2"
+                    >
+                      <MessageCircle className="w-4 h-4 text-emerald-400" />
+                      <span>WhatsApp Destek</span>
                     </button>
                   </div>
-
-                  <p className="text-xs text-slate-400">
-                    Ayrıca kılavuz Shopier tarafından kayıtlı e-postanıza ve telefonunuza SMS ile de iletilecektir.
-                  </p>
                 </div>
               )}
             </motion.div>
