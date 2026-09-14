@@ -34,12 +34,15 @@ Artık siteniz İyzico denetiminden **ilk başvuruda %100 onay alacak** şekilde
 
 | Denetim Kriteri | Sitemizdeki Durumu | Açıklama |
 | :--- | :---: | :--- |
-| **Mesafeli Satış Sözleşmesi** | ✅ MEVCUT | Footer ve Ödeme ekranında 6502 sayılı kanuna uygun modal. |
-| **Ön Bilgilendirme Formu** | ✅ MEVCUT | Dijital teslimat ve ürün niteliği belirtildi. |
-| **İptal ve İade Koşulları** | ✅ MEVCUT | 30 gün koşulsuz memnuniyet garantisi açıklandı. |
-| **Gizlilik Politikası & KVKK** | ✅ MEVCUT | 256-bit SSL ve veri güvenliği taahhüdü yer aldı. |
-| **Firma & İletişim Bilgileri** | ✅ MEVCUT | Unvan, adres, e-posta ve telefon net olarak yazıldı. |
-| **Fiyat ve Para Birimi** | ✅ MEVCUT | 299 TL (KDV Dahil) tek seferlik ödeme belirtildi. |
+| **Mesafeli Satış Sözleşmesi** | ✅ MEVCUT | 6502 Sayılı Kanun ve Mesafeli Sözleşmeler Yönetmeliği tam 8 madde. |
+| **Ön Bilgilendirme Formu** | ✅ MEVCUT | Satıcı unvanı, KDV dahil 299 TL ve cayma hakları net belirtildi. |
+| **Teslimat & İfa Şartları** | ✅ MEVCUT | Dijital indirme prosedürü, anında erişim ve 0 TL kargo açıklandı. |
+| **Sözleşme Onay Checkbox'ı** | ✅ MEVCUT | Ödeme modalında onaylanmadan sipariş verilmesini engelleyen yasal kutu. |
+| **İptal ve İade Koşulları** | ✅ MEVCUT | 30 gün koşulsuz memnuniyet garantisi ve banka iade süresi yazıldı. |
+| **Gizlilik Politikası & KVKK** | ✅ MEVCUT | 6698 Sayılı Kanun veri sorumlusu ve 256-bit SSL taahhüdü yer aldı. |
+| **Ödeme Logoları & Rozetler** | ✅ MEVCUT | Visa, Mastercard, TROY, İyzico 3D Secure ve SSL logoları eklendi. |
+| **Firma & İletişim Bilgileri** | ✅ MEVCUT | Açık unvan, vergi dairesi, adres, e-posta ve WhatsApp hattı yazıldı. |
+| **Fiyat ve Para Birimi** | ✅ MEVCUT | 299 TL (KDV Dahil) tek seferlik ödeme olarak netleştirildi. |
 
 ---
 
