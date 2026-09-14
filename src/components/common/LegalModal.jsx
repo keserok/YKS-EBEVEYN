@@ -96,13 +96,13 @@ export default function LegalModal({ isOpen, onClose, initialTab = "mesafeli" })
                   <strong>MADDE 4 – SÖZLEŞME KONUSU ÜRÜN BİLGİLERİ VE BEDELİ</strong><br />
                   Ürün Adı: Kaostan Düzene: YKS Ebeveyn Rehberi (Dijital PDF E-Kitap, Yazdırılabilir Kriz Protokolleri ve Vaka Analizleri)<br />
                   Satış Fiyatı: 299,00 TL (Tüm vergiler ve KDV dahildir)<br />
-                  Ödeme Şekli: İyzico Güvenli Ödeme Altyapısı ile Kredi / Banka Kartı (Tek Çekim veya Taksitli)<br />
-                  Teslimat Şekli: Ödeme onayını müteakip ekranda anında dijital indirme ve kayıtlı iletişim numarasına dijital iletim.
+                  Ödeme Şekli: Shopier Güvenli Ödeme Altyapısı ile Kredi / Banka Kartı (Tek Çekim veya Taksitli)<br />
+                  Teslimat Şekli: Ödeme onayını müteakip Shopier ekranında anında dijital PDF indirme ve kayıtlı e-postaya otomatik iletim.
                 </p>
 
                 <p>
                   <strong>MADDE 5 – TESLİMAT ŞEKLİ VE GİDERLERİ</strong><br />
-                  Ürün tamamen dijital ortamda ifa edilen bir e-kitap ve rehber olduğundan herhangi bir kargo, posta veya fiziksel nakliye masrafı bulunmamaktadır. Teslimat masrafı 0,00 TL'dir. Ödemenin İyzico 3D Secure ile doğrulanmasıyla birlikte ürün anında teslim edilmiş sayılır.
+                  Ürün tamamen dijital ortamda ifa edilen bir e-kitap ve rehber olduğundan herhangi bir kargo, posta veya fiziksel nakliye masrafı bulunmamaktadır. Teslimat masrafı 0,00 TL'dir. Ödemenin Shopier 3D Secure ile doğrulanmasıyla birlikte ürün anında teslim edilmiş sayılır.
                 </p>
 
                 <p>
@@ -143,11 +143,11 @@ export default function LegalModal({ isOpen, onClose, initialTab = "mesafeli" })
                 </p>
                 <p>
                   <strong>3. ÖDEME VE GÜVENLİK ESASLARI:</strong><br />
-                  Ödemeler BDDK lisanslı ödeme kuruluşu İyzico Ödeme Hizmetleri A.Ş. altyapısıyla 256-bit SSL korumalı ve 3D Secure zorunlu SMS doğrulaması ile tahsil edilir. ALICI'nın kart bilgileri hiçbir surette SATICI sisteminde saklanmaz ve işlenmez.
+                  Ödemeler lisanslı ödeme kuruluşu Shopier altyapısıyla 256-bit SSL korumalı ve 3D Secure zorunlu SMS doğrulaması ile tahsil edilir. ALICI'nın kart bilgileri hiçbir surette SATICI sisteminde saklanmaz ve işlenmez.
                 </p>
                 <p>
                   <strong>4. TESLİMAT VE İFA BİLGİLERİ:</strong><br />
-                  Ürün dijital formatta (PDF) olup, başarılı ödeme işleminin hemen ardından tarayıcı ekranında anında indirme butonuna dönüşür ve kayıtlı WhatsApp/e-posta adresine indirme bağlantısı iletilir. Fiziki teslimat yoktur.
+                  Ürün dijital formatta (PDF) olup, başarılı ödeme işleminin hemen ardından Shopier sipariş onay ekranında anında indirme butonuna dönüşür ve alıcının bildirdiği e-posta adresine indirme bağlantısı iletilir. WhatsApp veya üçüncü parti süreçlere gerek kalmaksızın anında teslimat sağlanır. Fiziki teslimat yoktur.
                 </p>
                 <p>
                   <strong>5. CAYMA HAKKI VE TAAHHÜT:</strong><br />
@@ -164,12 +164,12 @@ export default function LegalModal({ isOpen, onClose, initialTab = "mesafeli" })
                 </h4>
                 <p>
                   <strong>1. DİJİTAL TESLİMAT PROSEDÜRÜ:</strong><br />
-                  Sitemizden satın alınan "Kaostan Düzene: YKS Ebeveyn Rehberi" dijital bir içeriktir. Ödeme İyzico sistemi üzerinden başarıyla tamamlandığı anda:
+                  Sitemizden satın alınan "Kaostan Düzene: YKS Ebeveyn Rehberi" dijital bir içeriktir. Ödeme Shopier sistemi üzerinden başarıyla tamamlandığı anda:
                 </p>
                 <ul className="list-disc list-inside space-y-1 pl-2">
-                  <li>Ödeme onay ekranında doğrudan <strong>"PDF Rehberi Hemen İndir"</strong> butonu aktifleşir.</li>
+                  <li>Shopier ödeme onay ekranında doğrudan <strong>"PDF Rehberi Hemen İndir"</strong> butonu aktifleşir.</li>
                   <li>Kılavuz PDF formatında ALICI'nın bilgisayarına, tabletine veya akıllı telefonuna anında indirilir.</li>
-                  <li>Eş zamanlı olarak velinin formda beyan ettiği iletişim numarasına ve e-postasına kalıcı indirme bağlantısı yedeklenir.</li>
+                  <li>Eş zamanlı olarak velinin sipariş esnasında beyan ettiği e-posta adresine kalıcı indirme bağlantısı otomatik yedeklenir.</li>
                 </ul>
                 <p>
                   <strong>2. KARGO VE NAKLİYE:</strong><br />
@@ -197,11 +197,11 @@ export default function LegalModal({ isOpen, onClose, initialTab = "mesafeli" })
                 </p>
                 <p>
                   <strong>İADE BAŞVURUSU NASIL YAPILIR?</strong><br />
-                  İade talebinizi iletmek için satın alma sırasında kullandığınız ad-soyad veya telefon numaranızla birlikte <strong className="text-white">destek@kaostanduzene.com</strong> adresimize e-posta atmanız veya resmi WhatsApp hattımıza mesaj göndermeniz yeterlidir.
+                  İade talebinizi iletmek için satın alma sırasında kullandığınız ad-soyad veya e-posta bilginizle birlikte <strong className="text-white">destek@kaostanduzene.com</strong> adresimize e-posta atmanız yeterlidir.
                 </p>
                 <p>
                   <strong>İADE SÜRECİ VE ÜCRETİN HESABA GEÇMESİ:</strong><br />
-                  Talebiniz bize ulaştığı an sistemden iade talimatı verilir ve İyzico aracılığıyla bankanıza aktarılır. Bankanızın işlem sürecine bağlı olarak tutar 3 ila 7 iş günü içinde kartınıza/hesabınıza yansır.
+                  Talebiniz bize ulaştığı an sistemden iade talimatı verilir ve Shopier aracılığıyla bankanıza aktarılır. Bankanızın işlem sürecine bağlı olarak tutar 3 ila 7 iş günü içinde kartınıza/hesabınıza yansır.
                 </p>
               </div>
             )}
@@ -226,7 +226,7 @@ export default function LegalModal({ isOpen, onClose, initialTab = "mesafeli" })
                 </p>
                 <p>
                   <strong>4. VERİLERİN AKTARILMASI:</strong><br />
-                  Kişisel verileriniz kesinlikle üçüncü şahıslara satılmaz, kiralanmaz veya reklam amacıyla devredilmez. Ödeme işlemi esnasında finansal verileriniz doğrudan BDDK lisanslı İyzico altyapısına 256-bit SSL ile şifrelenmiş olarak aktarılır.
+                  Kişisel verileriniz kesinlikle üçüncü şahıslara satılmaz, kiralanmaz veya reklam amacıyla devredilmez. Ödeme işlemi esnasında finansal verileriniz doğrudan lisanslı Shopier altyapısına 256-bit SSL ile şifrelenmiş olarak aktarılır.
                 </p>
                 <p>
                   <strong>5. VERİ SAHİBİNİN HAKLARI:</strong><br />
@@ -255,8 +255,8 @@ export default function LegalModal({ isOpen, onClose, initialTab = "mesafeli" })
                     <span className="text-white">Sarıyer Vergi Dairesi / İstanbul</span>
                   </div>
                   <div className="flex flex-col sm:flex-row sm:justify-between border-b border-white/5 pb-1">
-                    <span className="text-slate-400">Müşteri Destek & WhatsApp:</span>
-                    <span className="text-gold">+90 532 410 88 90</span>
+                    <span className="text-slate-400">Müşteri Destek:</span>
+                    <span className="text-gold">destek@kaostanduzene.com</span>
                   </div>
                   <div className="flex flex-col sm:flex-row sm:justify-between border-b border-white/5 pb-1">
                     <span className="text-slate-400">Resmi E-Posta:</span>
@@ -268,7 +268,7 @@ export default function LegalModal({ isOpen, onClose, initialTab = "mesafeli" })
                   </div>
                   <div className="flex flex-col sm:flex-row sm:justify-between pt-1">
                     <span className="text-slate-400">Ödeme Altyapısı:</span>
-                    <span className="text-gold font-bold">İyzico 3D Secure Sanal POS</span>
+                    <span className="text-gold font-bold">Shopier 3D Secure Güvenli Ödeme</span>
                   </div>
                 </div>
               </div>
@@ -278,7 +278,7 @@ export default function LegalModal({ isOpen, onClose, initialTab = "mesafeli" })
           {/* Modal Footer */}
           <div className="p-4 border-t border-white/10 flex items-center justify-between bg-black/40 text-xs">
             <span className="text-slate-400 text-[11px] font-mono">
-              6502 Sayılı Tüketicinin Korunması Kanunu ve İyzico Denetim Şartlarına %100 Uygundur.
+              6502 Sayılı Tüketicinin Korunması Kanunu ve Shopier Güvenli Ödeme Standartlarına %100 Uygundur.
             </span>
             <button
               onClick={onClose}

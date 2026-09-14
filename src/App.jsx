@@ -11,6 +11,7 @@ import AdminDashboard from "./components/admin/AdminDashboard";
 import { STEPS_DATA } from "./data/stepsData";
 import { calculatePackage } from "./utils/algorithm";
 import { getStoredLeads, saveLead, updateLeadStatus } from "./utils/storage";
+import { trackPageView, trackLead, trackViewContent, trackQuizStart } from "./utils/metaPixel";
 
 export default function App() {
   // Current view: 'splash' | 'step' | 'gate' | 'vault_unlock' | 'result' | 'admin'
@@ -36,6 +37,7 @@ export default function App() {
 
   // Step 0: Splash -> Step 1 (Immediate Quiz Start for maximum completion rate)
   const handleStartExperience = () => {
+    trackQuizStart();
     setCurrentStepIndex(1);
     setCurrentView("step");
   };
@@ -102,6 +104,10 @@ export default function App() {
     saveLead(newLead);
     setLeads((prev) => [newLead, ...prev]);
 
+    // Meta Pixel Conversion Events: Lead & ViewContent
+    trackLead({ parentName, studentBranch });
+    trackViewContent({ title: result.title, archetype: result.dominantArchetype });
+
     // Go to results
     setCurrentView("result");
   };
@@ -120,6 +126,7 @@ export default function App() {
 
   // Restart Quiz
   const handleRestart = () => {
+    trackPageView();
     setAnswers({});
     setCurrentStepIndex(1);
     setPackageResult(null);

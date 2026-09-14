@@ -95,7 +95,7 @@ export default function LeadGate({ onProceed, onSecretAdminTrigger }) {
 
           <div className="space-y-1.5">
             <label className="block text-xs uppercase tracking-widest text-slate-300 font-semibold">
-              Telefon Numaranız (WhatsApp)
+              Telefon Numaranız
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gold">

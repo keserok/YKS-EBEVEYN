@@ -1,19 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Clock,
   RotateCcw,
   CheckCircle2,
   ShieldCheck,
-  Award,
   ArrowRight,
   Lock,
   Star,
   X,
   AlertTriangle,
-  HeartHandshake
+  HeartHandshake,
+  Download,
+  ChevronDown,
+  Sparkles,
+  BookOpen
 } from "lucide-react";
 import LegalModal from "./common/LegalModal";
+import { trackInitiateCheckout } from "../utils/metaPixel";
 
 export default function ResultDossier({ leadData, packageResult, onRestart }) {
   // 15-minute countdown timer
@@ -31,19 +35,49 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
     return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
   };
 
-  // Payment State
+  // Payment & Direct Transfer State
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [isPurchased, setIsPurchased] = useState(false);
 
   // Legal Modal State
   const [legalModalOpen, setLegalModalOpen] = useState(false);
   const [legalModalTab, setLegalModalTab] = useState("mesafeli");
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(true);
   const [termsError, setTermsError] = useState(false);
 
   const parentName = leadData?.parentName || leadData?.agencyName || "Değerli Velimiz";
   const studentBranch = leadData?.studentBranch || "12. Sınıf";
   const scorePercent = packageResult?.scorePercent || 70;
+
+  // Ref for Smooth Snap Scroll to Checkout Dossier
+  const checkoutRef = useRef(null);
+  const hasSnappedRef = useRef(false);
+
+  // Automatic Snap Scroll Listener (Triggers once when user starts scrolling down)
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!hasSnappedRef.current && window.scrollY > 35 && window.scrollY < 400) {
+        hasSnappedRef.current = true;
+        checkoutRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+
+    const handleWheel = (e) => {
+      if (!hasSnappedRef.current && e.deltaY > 15 && window.scrollY < 300) {
+        hasSnappedRef.current = true;
+        checkoutRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("wheel", handleWheel, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
 
   const triggerHaptic = (duration = 15) => {
     if (typeof window !== "undefined" && window.navigator?.vibrate) {
@@ -53,21 +87,31 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
     }
   };
 
-  const handleStartCheckout = () => {
-    triggerHaptic(20);
-    setShowCheckoutModal(true);
+  const scrollToCheckout = () => {
+    triggerHaptic(18);
+    hasSnappedRef.current = true;
+    checkoutRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const SHOPIER_URL = "https://www.shopier.com/50831713";
 
-  const handleShopierPurchase = () => {
-    if (!agreedToTerms) {
-      setTermsError(true);
-      return;
-    }
-    triggerHaptic(25);
-    window.open(SHOPIER_URL, "_blank");
+  // Direct 1-tap transfer to Shopier checkout
+  const handleDirectShopierTransfer = () => {
+    triggerHaptic(30);
+    setIsRedirecting(true);
     setIsPurchased(true);
+
+    // Meta Pixel Conversion Event: InitiateCheckout
+    trackInitiateCheckout({ value: 299, currency: "TRY" });
+
+    // Studio-grade redirect: smooth micro-interaction feedback then direct transfer
+    setTimeout(() => {
+      window.location.href = SHOPIER_URL;
+    }, 350);
+  };
+
+  const handleShopierPurchase = () => {
+    handleDirectShopierTransfer();
   };
 
   const openLegal = (tabId) => {
@@ -227,170 +271,196 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
           </div>
         </div>
 
-        {/* 2.2 TEHLİKE VE PSİKOLOJİK ETKİ */}
-        <div className="my-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-5 rounded-2xl bg-rose-950/20 border border-rose-500/30">
-            <div className="flex items-center gap-2 mb-2 text-rose-300 text-xs sm:text-sm font-mono font-bold uppercase">
-              <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
-              <span>Evinizdeki En Büyük Tuzak</span>
-            </div>
-            <p className="text-sm sm:text-base text-white/95 leading-relaxed font-light">
-              {packageResult?.invisibleTrap}
-            </p>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-amber-950/20 border border-amber-500/30">
-            <div className="flex items-center gap-2 mb-2 text-amber-300 text-xs sm:text-sm font-mono font-bold uppercase">
-              <HeartHandshake className="w-4 h-4 text-amber-400 shrink-0" />
-              <span>Gencin Yaşadığı Sessiz Baskı</span>
-            </div>
-            <p className="text-sm sm:text-base text-white/95 leading-relaxed font-light">
-              {packageResult?.teenImpact}
-            </p>
-          </div>
-        </div>
-
-        {/* 2.3 ACİL REÇETE */}
-        <div className="my-6 p-5 sm:p-6 rounded-3xl bg-black/60 border border-white/10">
-          <h3 className="font-serif text-lg sm:text-2xl text-white mb-3 flex items-center gap-2 font-medium">
-            <Award className="w-5 h-5 text-gold shrink-0" />
-            <span>Bu Hafta Uygulamanız Gereken 4 Kural</span>
-          </h3>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-slate-200">
-            {packageResult?.prescriptions?.map((item, idx) => (
-              <div
-                key={idx}
-                className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/5"
-              >
-                <span className="w-6 h-6 rounded-lg bg-gold/20 text-gold flex items-center justify-center shrink-0 font-mono font-bold text-xs">
-                  {idx + 1}
-                </span>
-                <span className="leading-snug text-white/90 text-sm sm:text-base">{item}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ========================================================================= */}
-        {/* 3. SATIŞ VE DÖNÜŞÜM ALANI (IRRESISTIBLE HIGH-CONVERTING OFFER)             */}
-        {/* ========================================================================= */}
-        <div className="mt-12 pt-10 border-t border-gold/30">
-          <div className="text-center max-w-2xl mx-auto mb-8">
-            <span className="px-4 py-1.5 rounded-full bg-gold/15 border border-gold/40 text-xs sm:text-sm font-mono font-bold tracking-wider text-gold-light inline-block mb-3">
-              BAŞUCU KILAVUZU & PROTOKOLLER
+        {/* 2.2 VURUCU KLİNİK TAVSİYELER & KRİZ KURALLARI (3 Net Kart) */}
+        <div className="my-6 sm:my-8 space-y-4">
+          <div className="flex items-center justify-between gap-2 px-1">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-gold flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-gold" />
+              <span>Acil Klinik Eylem Reçetesi</span>
             </span>
-            <h2 className="font-serif text-3xl sm:text-5xl text-white font-medium tracking-tight mb-3">
+            <span className="text-[11px] font-mono text-slate-400">
+              Uygulama Süresi: Anında
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* 1. NE YAPMAMALISINIZ (KRİTİK TUZAK) */}
+            <div className="p-5 sm:p-6 rounded-3xl bg-rose-950/25 border border-rose-500/40 shadow-lg relative overflow-hidden flex flex-col justify-between">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 font-mono text-xs font-bold uppercase tracking-wider mb-3">
+                  <AlertTriangle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                  <span>NE YAPMAMALISINIZ?</span>
+                </div>
+                <h4 className="font-serif text-lg sm:text-xl text-white font-medium mb-2 leading-snug">
+                  Kritik İletişim Tuzağı
+                </h4>
+                <p className="text-xs sm:text-sm text-slate-200 font-light leading-relaxed">
+                  {packageResult?.invisibleTrap}
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-rose-500/20 text-[11px] font-mono text-rose-300 font-medium">
+                ⚠️ Kaçış refleksi ve sahte çalışmayı tetikler.
+              </div>
+            </div>
+
+            {/* 2. NE YAPMALISINIZ (ACİL ATEŞKES) */}
+            <div className="p-5 sm:p-6 rounded-3xl bg-emerald-950/25 border border-emerald-500/40 shadow-lg relative overflow-hidden flex flex-col justify-between">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold uppercase tracking-wider mb-3">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>BU AKŞAM NE YAPMALISINIZ?</span>
+                </div>
+                <h4 className="font-serif text-lg sm:text-xl text-white font-medium mb-2 leading-snug">
+                  Acil Ateşkes Hamlesi
+                </h4>
+                <ul className="text-xs sm:text-sm text-slate-200 font-light space-y-2 leading-relaxed">
+                  <li className="flex items-start gap-2">
+                    <span className="text-emerald-400 font-bold">•</span>
+                    <span>{packageResult?.prescriptions?.[0] || "Deneme akşamı ilk 4 saat tam sessizlik uygulayın."}</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-emerald-400 font-bold">•</span>
+                    <span>{packageResult?.prescriptions?.[1] || "Odayı gencin kutsal egemenlik alanı ilan edin."}</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="mt-4 pt-3 border-t border-emerald-500/20 text-[11px] font-mono text-emerald-300 font-medium">
+                ✅ Güvenli liman hissi yaratır ve direnci kırar.
+              </div>
+            </div>
+
+            {/* 3. GENCİN İÇ DÜNYASI (PSİKOLOJİK GERÇEK) */}
+            <div className="p-5 sm:p-6 rounded-3xl bg-amber-950/25 border border-amber-500/40 shadow-lg relative overflow-hidden flex flex-col justify-between">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 font-mono text-xs font-bold uppercase tracking-wider mb-3">
+                  <HeartHandshake className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span>GENCİN İÇ DÜNYASI</span>
+                </div>
+                <h4 className="font-serif text-lg sm:text-xl text-white font-medium mb-2 leading-snug">
+                  Sessiz Çığlık
+                </h4>
+                <p className="text-xs sm:text-sm text-slate-200 font-light leading-relaxed">
+                  {packageResult?.teenImpact}
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-amber-500/20 text-[11px] font-mono text-amber-300 font-medium">
+                🧠 Sınavdan değil, hayal kırıklığı yaratmaktan korkuyor.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 2.3 AKICI KAYDIRMA ÇAĞRISI & SATIN ALMA ANKASI */}
+        <div className="my-6 sm:my-8 text-center">
+          <button
+            type="button"
+            onClick={scrollToCheckout}
+            className="group inline-flex items-center gap-3 px-8 py-4.5 rounded-full bg-gradient-to-r from-gold/20 via-gold/35 to-gold/20 hover:from-gold/30 hover:to-gold/45 border border-gold/50 text-white font-mono text-xs sm:text-sm font-bold uppercase tracking-widest transition-all shadow-[0_0_35px_rgba(212,175,55,0.3)] hover:shadow-[0_0_50px_rgba(212,175,55,0.5)] cursor-pointer active:scale-98 animate-pulse"
+          >
+            <Sparkles className="w-4 h-4 text-gold shrink-0" />
+            <span>Doğrudan Çözüm Protokollerine & Satın Almaya İn</span>
+            <ChevronDown className="w-4 h-4 text-gold group-hover:translate-y-1 transition-transform shrink-0" />
+          </button>
+          <p className="text-[11px] text-slate-400 font-mono mt-2.5">
+            Sayfayı aşağı kaydırdığınızda satın alma alanı otomatik olarak ayarlanacaktır ↓
+          </p>
+        </div>
+
+        {/* ========================================================================= */}
+        {/* 3. DÖNÜŞÜM MOTORU: TEK VE NET SATIN ALMA BÖLÜMÜ (#checkout-dossier)       */}
+        {/* ========================================================================= */}
+        <div
+          ref={checkoutRef}
+          id="checkout-dossier"
+          className="my-8 scroll-mt-6 p-6 sm:p-10 rounded-3xl bg-gradient-to-b from-gold/20 via-black/95 to-obsidian border-2 border-gold shadow-[0_25px_80px_rgba(212,175,55,0.35)] relative overflow-hidden"
+        >
+          {/* Top Discount Badge */}
+          <div className="text-center mb-6">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-rose-500/25 border border-rose-500/60 text-rose-300 font-mono text-xs sm:text-sm font-bold uppercase tracking-wider mb-2 animate-pulse">
+              %40 TESTİ TAMAMLAYANLARA ÖZEL İNDİRİM • 15 DAKİKA GEÇERLİ
+            </span>
+            <h2 className="font-serif text-2xl sm:text-4xl text-white font-medium tracking-tight mb-2">
               Kaostan Düzene: YKS Ebeveyn Rehberi
             </h2>
-            <p className="text-base sm:text-lg text-slate-300 font-light leading-relaxed">
-              Yüzeysel tavsiyeler değil; Jordan B. Peterson ekolünden mülhem, evinizi açık hava hapishanesinden güvenli bir limana dönüştürecek klinik rehber.
+            <p className="text-xs sm:text-sm text-slate-300 font-light max-w-lg mx-auto">
+              Evinizdeki sınav yangınını söndürecek 10 bölümlük klinik başucu e-kitabı ve yazdırılabilir kriz protokolleri.
             </p>
           </div>
 
-          {/* Book Mockup & 5 Core Pillars */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center mb-8">
-            <div className="lg:col-span-5 flex flex-col items-center">
-              <div className="relative group max-w-[260px] sm:max-w-[320px]">
-                <div className="absolute -inset-4 bg-gradient-to-r from-gold/30 to-amber-600/25 rounded-3xl blur-2xl opacity-70 group-hover:opacity-100 transition-opacity" />
-                <div className="relative rounded-2xl overflow-hidden border-2 border-gold/50 shadow-[0_20px_60px_rgba(0,0,0,0.9)]">
+          {/* Book Mockup & Deliverables Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center my-6 pb-6 border-b border-white/10">
+            <div className="md:col-span-5 flex flex-col items-center">
+              <div className="relative group max-w-[220px] sm:max-w-[260px]">
+                <div className="absolute -inset-3 bg-gradient-to-r from-gold/40 to-amber-600/30 rounded-3xl blur-xl opacity-80" />
+                <div className="relative rounded-2xl overflow-hidden border-2 border-gold/60 shadow-[0_20px_50px_rgba(0,0,0,0.95)]">
                   <img
                     src="/kaostan_duzene_book.jpg"
                     alt="Kaostan Düzene Kitap Mockup"
                     className="w-full h-auto object-cover"
                   />
                 </div>
-                <div className="mt-3 text-center">
-                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-gold-light">
-                    PDF E-Kitap + Yazdırılabilir Protokoller
+              </div>
+              <span className="text-[11px] font-mono text-gold-light font-bold mt-2.5 flex items-center gap-1.5">
+                <Download className="w-3.5 h-3.5" /> PDF Olarak Anında İndirilir
+              </span>
+            </div>
+
+            <div className="md:col-span-7 space-y-3 text-left">
+              <span className="text-xs font-mono uppercase font-bold text-gold tracking-wider block mb-1">
+                Pakete Dahil Olan Tüm İçerikler:
+              </span>
+
+              <div className="p-3.5 rounded-2xl bg-white/[0.04] border border-white/10 flex items-start gap-3">
+                <BookOpen className="w-5 h-5 text-gold shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-white text-xs sm:text-sm block">
+                    10 Bölümlük Klinik E-Kitap (PDF)
+                  </strong>
+                  <span className="text-[11px] sm:text-xs text-slate-300 font-light">
+                    Jordan Peterson ekolünden; pazar akşamı krizlerinden sirkadiyen uyku intizamına evdeki sınav stresini bitiren rehber.
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-gold/10 border border-gold/30 flex items-start gap-3">
+                <span className="text-lg shrink-0">🎁</span>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <strong className="text-white text-xs sm:text-sm block">
+                      Bonus 1: Deneme Sonrası 24 Saat Kriz Tablosu
+                    </strong>
+                    <span className="text-[10px] font-mono font-bold text-gold-light uppercase bg-gold/20 px-2 py-0.5 rounded">
+                      Değer: ₺150
+                    </span>
+                  </div>
+                  <span className="text-[11px] sm:text-xs text-slate-300 font-light">
+                    İlk 4 saat tam sessizlik ve pazar kavgalarını bıçak gibi kesen somut protokol.
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-gold/10 border border-gold/30 flex items-start gap-3">
+                <span className="text-lg shrink-0">🎁</span>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <strong className="text-white text-xs sm:text-sm block">
+                      Bonus 2: İmzalanabilir Oda Egemenlik Sözleşmesi
+                    </strong>
+                    <span className="text-[10px] font-mono font-bold text-gold-light uppercase bg-gold/20 px-2 py-0.5 rounded">
+                      Değer: ₺100
+                    </span>
+                  </div>
+                  <span className="text-[11px] sm:text-xs text-slate-300 font-light">
+                    Gencin özerkliğini koruyan, kapı dinlemeleri ve teftişleri sonlandıran resmi sözleşme metni.
                   </span>
                 </div>
               </div>
             </div>
-
-            <div className="lg:col-span-7 space-y-3">
-              <h3 className="font-serif text-xl sm:text-2xl font-medium text-white mb-3">
-                Rehber Size Neler Kazandıracak?
-              </h3>
-
-              <div className="space-y-2.5 text-sm sm:text-base">
-                {[
-                  {
-                    title: "Deneme Sonrası 24 Saat Metanet Kuralı",
-                    desc: "İlk 4 saat tam sessizlik; pazar akşamı kavgalarını bıçak gibi kesen kriz protokolü."
-                  },
-                  {
-                    title: "Dili Zehirden Arındırma Sözlüğü",
-                    desc: "Gardiyan dili ('Kaç soru çözdün?') yerine genci ayağa kaldıran hakikat dili."
-                  },
-                  {
-                    title: "Oda Egemenlik Sözleşmesi (İmzalanabilir)",
-                    desc: "Kapıyı dinlemelerin sonu; gencin kendi kaderinin ağırlığını onurla taşıması."
-                  },
-                  {
-                    title: "Biyolojik İntizam & Sirkadiyen Düzen",
-                    desc: "Sabit uyanış ve uykudan 60 dk önce dijital karartma ile sinir sistemi koruması."
-                  },
-                  {
-                    title: "Haftalık 2 Saatlik Sınavsız Aile Mabedi",
-                    desc: "Evde sınav kelimesini yasaklayarak aile bağlarını yangından sağlam çıkarma."
-                  }
-                ].map((item, i) => (
-                  <div
-                    key={i}
-                    className="flex items-start gap-3 p-3.5 rounded-2xl bg-white/[0.04] border border-white/10"
-                  >
-                    <CheckCircle2 className="w-5 h-5 text-gold shrink-0 mt-0.5" />
-                    <div>
-                      <strong className="text-white font-medium block text-sm sm:text-base">
-                        {item.title}
-                      </strong>
-                      <span className="text-xs sm:text-sm text-slate-300">{item.desc}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
 
-          {/* 2 Ücretsiz Bonus */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 my-6">
-            <div className="p-4 rounded-2xl bg-gold/10 border border-gold/30 flex items-center gap-3.5">
-              <span className="text-2xl">🎁</span>
-              <div>
-                <span className="text-[10px] font-mono uppercase font-bold text-gold-light">
-                  ÜCRETSİZ BONUS 1 (Değer: ₺150)
-                </span>
-                <strong className="text-sm sm:text-base text-white block">
-                  Deneme Sonrası 24 Saat Kriz Tablosu
-                </strong>
-              </div>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-gold/10 border border-gold/30 flex items-center gap-3.5">
-              <span className="text-2xl">🎁</span>
-              <div>
-                <span className="text-[10px] font-mono uppercase font-bold text-gold-light">
-                  ÜCRETSİZ BONUS 2 (Değer: ₺100)
-                </span>
-                <strong className="text-sm sm:text-base text-white block">
-                  İmzalanabilir Oda Egemenlik Sözleşmesi (PDF)
-                </strong>
-              </div>
-            </div>
-          </div>
-
-          {/* FİYATLANDIRMA VE SATIN ALMA KUTUSU */}
-          <div className="my-8 p-6 sm:p-10 rounded-3xl bg-gradient-to-b from-gold/20 via-black/90 to-obsidian border-2 border-gold shadow-[0_20px_70px_rgba(212,175,55,0.3)] text-center relative">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-rose-500/25 border border-rose-500/60 text-rose-300 font-mono text-xs sm:text-sm font-bold uppercase tracking-wider mb-3 animate-pulse">
-              %40 TESTİ TAMAMLAYANLARA ÖZEL İNDİRİM
-            </span>
-
-            <h3 className="font-serif text-2xl sm:text-4xl text-white font-medium mb-2">
-              Rehber, Protokoller ve Tüm Bonuslar
-            </h3>
-
-            <div className="flex items-center justify-center gap-4 my-4">
+          {/* Pricing & High-Converting CTA Box */}
+          <div className="text-center max-w-md mx-auto space-y-4">
+            <div className="flex items-center justify-center gap-4">
               <span className="text-2xl sm:text-3xl text-slate-400 line-through font-serif decoration-rose-500 decoration-2">
                 499 ₺
               </span>
@@ -399,32 +469,67 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
               </span>
             </div>
 
-            <p className="text-sm sm:text-base text-slate-300 max-w-md mx-auto mb-6 font-light">
-              Ödemenizi tamamladığınız anda PDF rehber anında ekranınıza açılır ve telefonunuza indirilir.
+            <p className="text-xs sm:text-sm text-slate-300 font-light leading-relaxed">
+              Ödemenizi tamamladığınız anda PDF rehberiniz ekranda anında indirmeye açılır ve e-posta adresinize gönderilir. WhatsApp veya herhangi bir bekleme süreci yoktur.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
+            <button
+              type="button"
+              onClick={handleDirectShopierTransfer}
+              disabled={isRedirecting}
+              className="w-full py-5 px-8 rounded-2xl bg-gradient-to-r from-gold via-gold-shimmer to-gold text-obsidian font-bold text-base sm:text-lg tracking-widest uppercase transition-all shadow-[0_15px_45px_rgba(212,175,55,0.5)] hover:shadow-[0_20px_60px_rgba(212,175,55,0.7)] cursor-pointer active:scale-98 flex items-center justify-center gap-3"
+            >
+              {isRedirecting ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-obsidian border-t-transparent rounded-full animate-spin" />
+                  <span>Shopier'a Aktarılıyor...</span>
+                </>
+              ) : (
+                <>
+                  <Lock className="w-5 h-5 text-obsidian shrink-0" />
+                  <span>Shopier ile Güvenli Satın Al & İndir (299 ₺)</span>
+                  <ArrowRight className="w-5 h-5 text-obsidian shrink-0" />
+                </>
+              )}
+            </button>
+
+            <div className="text-[11px] text-slate-400 text-center pt-1 font-light leading-relaxed">
+              <span>Devam ederek </span>
               <button
                 type="button"
-                onClick={handleStartCheckout}
-                className="w-full py-5 px-8 rounded-2xl bg-gradient-to-r from-gold via-gold-shimmer to-gold text-obsidian font-bold text-base sm:text-lg tracking-widest uppercase transition-all shadow-[0_15px_45px_rgba(212,175,55,0.5)] hover:shadow-[0_20px_60px_rgba(212,175,55,0.7)] cursor-pointer active:scale-98 flex items-center justify-center gap-3"
+                onClick={() => openLegal("onbilgi")}
+                className="text-gold underline hover:text-gold-light cursor-pointer font-medium"
               >
-                <Lock className="w-5 h-5 text-obsidian" />
-                <span>Rehberi Hemen İndir (299 ₺)</span>
-                <ArrowRight className="w-5 h-5 text-obsidian" />
+                Ön Bilgilendirme
               </button>
+              <span> ve </span>
+              <button
+                type="button"
+                onClick={() => openLegal("mesafeli")}
+                className="text-gold underline hover:text-gold-light cursor-pointer font-medium"
+              >
+                Mesafeli Satış Sözleşmesi
+              </button>
+              <span> şartlarını kabul etmiş sayılırsınız.</span>
             </div>
 
-            <div className="pt-6 mt-6 border-t border-white/10 flex flex-wrap items-center justify-center gap-5 text-xs text-slate-400 font-mono">
-              <span>3D Secure</span>
+            <div className="pt-5 border-t border-white/10 flex flex-wrap items-center justify-center gap-3 text-xs text-slate-300 font-mono">
+              <span className="flex items-center gap-1 text-emerald-400">
+                <CheckCircle2 className="w-3.5 h-3.5" /> Anında PDF İndir
+              </span>
               <span>•</span>
-              <span>256-Bit SSL</span>
+              <span className="flex items-center gap-1 text-gold">
+                <Lock className="w-3.5 h-3.5" /> 256-Bit SSL & 3D Secure
+              </span>
               <span>•</span>
-              <span>Shopier Güvencesi</span>
+              <span className="flex items-center gap-1 text-sky-400">
+                <ShieldCheck className="w-3.5 h-3.5" /> Shopier Güvencesi
+              </span>
               <span>•</span>
-              <span>30 Gün İade</span>
+              <span className="text-slate-400">30 Gün İade</span>
             </div>
           </div>
+        </div>
 
           {/* 30 Gün Garanti */}
           <div className="p-6 rounded-3xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-center gap-4 my-6 text-center sm:text-left">
@@ -479,7 +584,7 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
             </div>
           </div>
 
-          {/* RESTART & LEGAL FOOTER (Crucial for İyzico Merchant Approval) */}
+          {/* RESTART & LEGAL FOOTER (100% Shopier Compliance) */}
           <div className="pt-8 border-t border-white/10 flex flex-col items-center gap-4 text-center">
             <button
               type="button"
@@ -490,7 +595,7 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
               <span>Testi Baştan Çöz</span>
             </button>
 
-            {/* Legal Links Bar - 100% Iyzico Compliance */}
+            {/* Legal Links Bar - 100% Shopier Compliance */}
             <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[11px] font-mono text-slate-400">
               <button
                 type="button"
@@ -541,37 +646,36 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
               </button>
             </div>
 
-            {/* Payment Scheme & Security Trust Bar */}
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-              <div className="px-3 py-1 rounded-lg bg-white/[0.04] border border-white/10 flex items-center gap-1.5">
+            {/* Payment Scheme & Shopier Security Trust Bar */}
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-3">
+              <div className="px-3.5 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 flex items-center gap-2">
                 <span className="font-bold italic text-blue-400 text-xs tracking-wider">VISA</span>
               </div>
-              <div className="px-3 py-1 rounded-lg bg-white/[0.04] border border-white/10 flex items-center gap-1.5">
+              <div className="px-3.5 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 flex items-center gap-2">
                 <div className="flex -space-x-1.5">
                   <div className="w-3.5 h-3.5 rounded-full bg-red-500 opacity-90" />
                   <div className="w-3.5 h-3.5 rounded-full bg-amber-400 opacity-90" />
                 </div>
                 <span className="font-semibold text-white text-[11px]">Mastercard</span>
               </div>
-              <div className="px-3 py-1 rounded-lg bg-white/[0.04] border border-white/10 flex items-center gap-1">
+              <div className="px-3.5 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 flex items-center gap-1.5">
                 <span className="font-bold text-red-400 text-xs tracking-wide">TROY</span>
               </div>
-              <div className="px-3 py-1 rounded-lg bg-white/[0.04] border border-white/10 flex items-center gap-1.5 text-emerald-400 text-xs font-mono">
-                <ShieldCheck className="w-4 h-4" />
-                <span>Shopier Güvenli Ödeme</span>
+              <div className="px-4 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-2 text-emerald-400 text-xs font-mono font-medium shadow-[0_0_20px_rgba(16,185,129,0.15)]">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span>Shopier Güvencesi</span>
               </div>
-              <div className="px-3 py-1 rounded-lg bg-white/[0.04] border border-white/10 flex items-center gap-1.5 text-gold text-xs font-mono">
+              <div className="px-3.5 py-1.5 rounded-xl bg-gold/10 border border-gold/30 flex items-center gap-2 text-gold text-xs font-mono">
                 <Lock className="w-3.5 h-3.5" />
                 <span>256-Bit SSL 3D Secure</span>
               </div>
             </div>
 
-            <span className="text-[10px] text-slate-500 font-mono">
-              6502 Sayılı Tüketicinin Korunması Hakkında Kanun, Mesafeli Sözleşmeler Yönetmeliği ve Shopier Güvenli Ödeme Standartlarına %100 Uygundur.
-            </span>
+            <p className="text-[11px] text-slate-400 font-mono max-w-xl mx-auto leading-relaxed pt-1">
+              Tüm ödemeleriniz Shopier Güvenli Ödeme altyapısı ile 256-Bit SSL şifreleme ve 3D Secure SMS doğrulaması altında korunur. 6502 Sayılı Tüketicinin Korunması Kanunu ve Mesafeli Sözleşmeler Yönetmeliği'ne %100 uygundur.
+            </p>
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
 
       {/* 4. MODAL: GÜVENLİ SHOPIER ÖDEME */}
       <AnimatePresence>
@@ -695,24 +799,38 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
               ) : (
                 <div className="text-center py-6 space-y-4">
                   <span className="font-mono text-[11px] tracking-epic text-gold uppercase block font-semibold">
-                    ÖDEME SAYFASI
+                    ÖDEME MERKEZİ
                   </span>
 
                   <h3 className="font-serif text-2xl sm:text-3xl font-medium text-white tracking-tight">
-                    Shopier Ekranı Açıldı
+                    Shopier Güvenli Sayfası Açıldı
                   </h3>
 
                   <p className="text-xs sm:text-sm text-slate-300 font-light max-w-xs mx-auto leading-relaxed">
-                    299 ₺ ödemenizi tamamladığınızda kılavuzunuz ve tüm protokoller SMS ve e-posta ile anında iletilecektir.
+                    299 ₺ ödemenizi Shopier üzerinde tamamladığınız anda PDF rehberiniz ekranda anında indirmeye açılır ve e-posta adresinize otomatik iletilir.
                   </p>
+
+                  <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-mono text-left space-y-1">
+                    <div className="flex items-center gap-2 font-bold text-emerald-400">
+                      <CheckCircle2 className="w-4 h-4 shrink-0" />
+                      <span>Sıfır Bekleme • Doğrudan Teslimat</span>
+                    </div>
+                    <p className="text-[11px] text-slate-300 pl-6 leading-relaxed">
+                      WhatsApp veya herhangi bir manuel onay süreci yoktur; ödeme onaylandığı an PDF dosyanız cihazınıza anında indirilebilir olacaktır.
+                    </p>
+                  </div>
 
                   <div className="pt-3 space-y-2">
                     <button
                       type="button"
-                      onClick={() => window.open(SHOPIER_URL, "_blank")}
-                      className="w-full py-4 rounded-2xl bg-gradient-to-r from-gold via-gold-shimmer to-gold text-obsidian font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-lg active:scale-98 cursor-pointer"
+                      onClick={() => {
+                        triggerHaptic(20);
+                        window.location.href = SHOPIER_URL;
+                      }}
+                      className="w-full py-4 rounded-2xl bg-gradient-to-r from-gold via-gold-shimmer to-gold text-obsidian font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-lg active:scale-98 cursor-pointer flex items-center justify-center gap-2"
                     >
-                      Ödeme Sayfasına Dön
+                      <Download className="w-4 h-4 text-obsidian shrink-0" />
+                      <span>Shopier Ödeme Sayfasına Git</span>
                     </button>
 
                     <button
@@ -723,7 +841,7 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
                       }}
                       className="text-xs text-slate-400 hover:text-white pt-2 inline-block cursor-pointer font-mono"
                     >
-                      Pencereyi Kapat
+                      Kapat ve Rapora Dön
                     </button>
                   </div>
                 </div>
@@ -739,6 +857,44 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
         onClose={() => setLegalModalOpen(false)}
         initialTab={legalModalTab}
       />
+
+      {/* 6. STUDIO MOBILE STICKY FLOATING CTA BAR (ui-ux-pro-max) */}
+      <div className="sm:hidden fixed bottom-0 inset-x-0 z-40 px-4 py-3 bg-[#0B0C10]/95 backdrop-blur-2xl border-t border-gold/30 shadow-[0_-12px_40px_rgba(0,0,0,0.9)] flex items-center justify-between gap-3">
+        <div className="flex flex-col">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-xl font-bold font-serif text-gold-light">
+              299 ₺
+            </span>
+            <span className="text-xs text-slate-500 line-through">
+              499 ₺
+            </span>
+          </div>
+          <span className="text-[10px] text-emerald-400 font-mono flex items-center gap-1 font-medium">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            Anında PDF İndir
+          </span>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleDirectShopierTransfer}
+          disabled={isRedirecting}
+          className="py-3 px-5 rounded-xl bg-gradient-to-r from-gold via-gold-shimmer to-gold text-obsidian font-bold text-xs uppercase tracking-wider shadow-[0_4px_25px_rgba(212,175,55,0.45)] active:scale-95 flex items-center gap-2 cursor-pointer shrink-0"
+        >
+          {isRedirecting ? (
+            <>
+              <div className="w-3.5 h-3.5 border-2 border-obsidian border-t-transparent rounded-full animate-spin" />
+              <span>Aktarılıyor...</span>
+            </>
+          ) : (
+            <>
+              <Lock className="w-3.5 h-3.5 text-obsidian shrink-0" />
+              <span>Hemen İndir</span>
+              <ArrowRight className="w-3.5 h-3.5 text-obsidian shrink-0" />
+            </>
+          )}
+        </button>
+      </div>
     </div>
   );
 }
