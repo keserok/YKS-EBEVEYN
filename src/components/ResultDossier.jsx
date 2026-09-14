@@ -112,12 +112,15 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
     }
   };
 
-  const handleSimulatePurchase = () => {
+  const SHOPIER_URL = "https://www.shopier.com/50831713";
+
+  const handleShopierPurchase = () => {
     if (!agreedToTerms) {
       setTermsError(true);
       return;
     }
-    triggerHaptic(30);
+    triggerHaptic(25);
+    window.open(SHOPIER_URL, "_blank");
     setIsPurchased(true);
     try {
       confetti({
@@ -644,7 +647,7 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
                     </div>
                     <div>
                       <h3 className="font-serif text-xl sm:text-2xl font-medium text-white">
-                        İyzico 3D Secure Güvenli Ödeme
+                        Shopier 3D Secure Güvenli Ödeme
                       </h3>
                       <span className="text-xs font-mono text-gold-light font-bold">
                         299 ₺ (Lansman Fırsatı)
@@ -680,7 +683,7 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
                         </div>
                       </div>
 
-                      {/* 6502 Sayılı Tüketici Kanunu & İyzico Zorunlu Sözleşme Onayı */}
+                      {/* 6502 Sayılı Tüketici Kanunu & Zorunlu Sözleşme Onayı */}
                       <div className="mb-4">
                         <label className={`flex items-start gap-3 p-3.5 rounded-2xl border transition-all cursor-pointer text-xs select-none ${
                           termsError 
@@ -733,15 +736,16 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
                       <div className="space-y-3">
                         <button
                           type="button"
-                          onClick={handleSimulatePurchase}
-                          className={`w-full py-4.5 rounded-2xl font-bold text-sm sm:text-base tracking-wider uppercase shadow-xl transition-all flex items-center justify-center gap-2 ${
+                          onClick={handleShopierPurchase}
+                          className={`w-full py-4.5 rounded-2xl font-bold text-sm sm:text-base tracking-wider uppercase shadow-xl transition-all flex items-center justify-center gap-2.5 ${
                             agreedToTerms
-                              ? "bg-gradient-to-r from-gold via-gold-shimmer to-gold text-obsidian shadow-gold/30 hover:shadow-gold/50 cursor-pointer active:scale-98"
+                              ? "bg-gradient-to-r from-gold via-gold-shimmer to-gold text-obsidian shadow-gold/30 hover:shadow-gold/50 cursor-pointer active:scale-98 hover:scale-[1.01]"
                               : "bg-white/10 text-slate-400 border border-white/10 cursor-pointer hover:border-white/25"
                           }`}
                         >
                           <CreditCard className="w-5 h-5 text-obsidian" />
-                          <span>Kredi / Banka Kartı ile Öde (299 ₺)</span>
+                          <span>Shopier ile Kartla Güvenli Öde (299 ₺)</span>
+                          <ArrowRight className="w-4 h-4 text-obsidian" />
                         </button>
 
                         <button
@@ -754,14 +758,14 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
                         </button>
                       </div>
 
-                      {/* İyzico, Visa, Mastercard, Troy, 256-Bit SSL Rozetleri */}
+                      {/* Shopier, Visa, Mastercard, Troy, 256-Bit SSL Rozetleri */}
                       <div className="pt-4 mt-4 border-t border-white/10 flex flex-wrap items-center justify-center gap-2 text-[10px] text-slate-400 font-mono">
                         <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-bold tracking-wider">VISA</span>
                         <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-bold">Mastercard</span>
                         <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-red-400 font-bold tracking-wider">TROY</span>
                         <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-emerald-400 flex items-center gap-1">
                           <ShieldCheck className="w-3 h-3" />
-                          iyzico 3D Secure
+                          Shopier 3D Secure
                         </span>
                         <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-gold flex items-center gap-1">
                           <Lock className="w-3 h-3" />
@@ -770,7 +774,7 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
                       </div>
 
                       <p className="text-[11px] text-slate-400 text-center mt-3 leading-relaxed">
-                        Ödemenizin ardından PDF kılavuz doğrudan cihazınıza indirilir ve WhatsApp hattınıza iletilir.
+                        Ödemeniz Shopier 256-bit SSL korumasıyla gerçekleşir. Kılavuz cihazınıza anında indirilir.
                       </p>
                     </>
                   )}
@@ -782,21 +786,37 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
                   </div>
 
                   <h3 className="font-serif text-2xl sm:text-3xl text-white font-medium">
-                    Ödemeniz Onaylandı!
+                    Shopier Ödeme Sayfanız Açıldı!
                   </h3>
 
-                  <p className="text-sm text-slate-300 max-w-sm mx-auto">
-                    "Kaostan Düzene: YKS Ebeveyn Rehberi" kılavuzunuz ve bonus protokolleriniz hazırlandı.
+                  <p className="text-sm text-slate-300 max-w-sm mx-auto leading-relaxed">
+                    Ödemenizi Shopier ekranında tamamladıktan sonra <strong>"Kaostan Düzene: YKS Ebeveyn Rehberi"</strong> PDF kılavuzunuzu hemen aşağıdan cihazınıza indirebilirsiniz:
                   </p>
 
-                  <a
-                    href="/kaostan_duzene.pdf"
-                    download="Kaostan_Duzene_YKS_Ebeveyn_Rehberi.pdf"
-                    className="inline-flex items-center gap-2 px-8 py-4.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold text-sm sm:text-base tracking-wider uppercase shadow-xl hover:scale-105 transition-all cursor-pointer"
-                  >
-                    <Download className="w-5 h-5" />
-                    <span>PDF Rehberi Şimdi İndir</span>
-                  </a>
+                  <div className="pt-2">
+                    <a
+                      href="/kaostan_duzene.pdf"
+                      download="Kaostan_Duzene_YKS_Ebeveyn_Rehberi.pdf"
+                      className="inline-flex items-center gap-2 px-8 py-4.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold text-sm sm:text-base tracking-wider uppercase shadow-xl hover:scale-105 transition-all cursor-pointer"
+                    >
+                      <Download className="w-5 h-5" />
+                      <span>PDF Rehberi Şimdi İndir</span>
+                    </a>
+                  </div>
+
+                  <div className="pt-2">
+                    <button
+                      type="button"
+                      onClick={() => window.open(SHOPIER_URL, "_blank")}
+                      className="text-xs text-gold underline hover:text-gold-light font-mono cursor-pointer"
+                    >
+                      Shopier ödeme sayfası açılmadıysa tekrar açmak için tıklayın
+                    </button>
+                  </div>
+
+                  <p className="text-xs text-slate-400">
+                    Ayrıca kılavuz Shopier tarafından kayıtlı e-postanıza ve telefonunuza SMS ile de iletilecektir.
+                  </p>
                 </div>
               )}
             </motion.div>
