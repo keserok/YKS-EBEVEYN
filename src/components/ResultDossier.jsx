@@ -9,11 +9,8 @@ import {
   Lock,
   Star,
   X,
-  AlertTriangle,
-  HeartHandshake,
   Download,
   ChevronDown,
-  Sparkles,
   BookOpen
 } from "lucide-react";
 import LegalModal from "./common/LegalModal";
@@ -273,47 +270,44 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
 
         {/* 2.2 VURUCU KLİNİK TAVSİYELER & KRİZ KURALLARI (3 Net Kart) */}
         <div className="my-6 sm:my-8 space-y-4">
-          <div className="flex items-center justify-between gap-2 px-1">
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-gold flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-gold" />
-              <span>Acil Klinik Eylem Reçetesi</span>
+          <div className="flex items-center justify-between gap-2 px-1 border-b border-white/10 pb-2">
+            <span className="text-xs font-mono font-bold uppercase tracking-widest text-gold">
+              02 / Acil Klinik Eylem Reçetesi
             </span>
             <span className="text-[11px] font-mono text-slate-400">
-              Uygulama Süresi: Anında
+              Uygulama: Anında
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* 1. NE YAPMAMALISINIZ (KRİTİK TUZAK) */}
-            <div className="p-5 sm:p-6 rounded-3xl bg-rose-950/25 border border-rose-500/40 shadow-lg relative overflow-hidden flex flex-col justify-between">
+            <div className="p-5 sm:p-6 rounded-2xl bg-[#140C0F] border border-rose-500/30 shadow-lg relative flex flex-col justify-between">
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 font-mono text-xs font-bold uppercase tracking-wider mb-3">
-                  <AlertTriangle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
-                  <span>NE YAPMAMALISINIZ?</span>
+                <div className="border-l-2 border-rose-500 pl-2.5 text-rose-400 font-mono text-xs font-bold uppercase tracking-widest mb-3">
+                  Ne Yapmamalısınız?
                 </div>
                 <h4 className="font-serif text-lg sm:text-xl text-white font-medium mb-2 leading-snug">
                   Kritik İletişim Tuzağı
                 </h4>
-                <p className="text-xs sm:text-sm text-slate-200 font-light leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-300 font-light leading-relaxed">
                   {packageResult?.invisibleTrap}
                 </p>
               </div>
               <div className="mt-4 pt-3 border-t border-rose-500/20 text-[11px] font-mono text-rose-300 font-medium">
-                ⚠️ Kaçış refleksi ve sahte çalışmayı tetikler.
+                Kaçış refleksi ve sahte çalışmayı tetikler.
               </div>
             </div>
 
             {/* 2. NE YAPMALISINIZ (ACİL ATEŞKES) */}
-            <div className="p-5 sm:p-6 rounded-3xl bg-emerald-950/25 border border-emerald-500/40 shadow-lg relative overflow-hidden flex flex-col justify-between">
+            <div className="p-5 sm:p-6 rounded-2xl bg-[#0B1511] border border-emerald-500/30 shadow-lg relative flex flex-col justify-between">
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold uppercase tracking-wider mb-3">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  <span>BU AKŞAM NE YAPMALISINIZ?</span>
+                <div className="border-l-2 border-emerald-500 pl-2.5 text-emerald-400 font-mono text-xs font-bold uppercase tracking-widest mb-3">
+                  Bu Akşam Ne Yapmalısınız?
                 </div>
                 <h4 className="font-serif text-lg sm:text-xl text-white font-medium mb-2 leading-snug">
                   Acil Ateşkes Hamlesi
                 </h4>
-                <ul className="text-xs sm:text-sm text-slate-200 font-light space-y-2 leading-relaxed">
+                <ul className="text-xs sm:text-sm text-slate-300 font-light space-y-2 leading-relaxed">
                   <li className="flex items-start gap-2">
                     <span className="text-emerald-400 font-bold">•</span>
                     <span>{packageResult?.prescriptions?.[0] || "Deneme akşamı ilk 4 saat tam sessizlik uygulayın."}</span>
@@ -325,45 +319,40 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
                 </ul>
               </div>
               <div className="mt-4 pt-3 border-t border-emerald-500/20 text-[11px] font-mono text-emerald-300 font-medium">
-                ✅ Güvenli liman hissi yaratır ve direnci kırar.
+                Güvenli liman hissi yaratır ve direnci kırar.
               </div>
             </div>
 
             {/* 3. GENCİN İÇ DÜNYASI (PSİKOLOJİK GERÇEK) */}
-            <div className="p-5 sm:p-6 rounded-3xl bg-amber-950/25 border border-amber-500/40 shadow-lg relative overflow-hidden flex flex-col justify-between">
+            <div className="p-5 sm:p-6 rounded-2xl bg-[#17130B] border border-amber-500/30 shadow-lg relative flex flex-col justify-between">
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 font-mono text-xs font-bold uppercase tracking-wider mb-3">
-                  <HeartHandshake className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                  <span>GENCİN İÇ DÜNYASI</span>
+                <div className="border-l-2 border-amber-500 pl-2.5 text-amber-400 font-mono text-xs font-bold uppercase tracking-widest mb-3">
+                  Gencin İç Dünyası
                 </div>
                 <h4 className="font-serif text-lg sm:text-xl text-white font-medium mb-2 leading-snug">
                   Sessiz Çığlık
                 </h4>
-                <p className="text-xs sm:text-sm text-slate-200 font-light leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-300 font-light leading-relaxed">
                   {packageResult?.teenImpact}
                 </p>
               </div>
               <div className="mt-4 pt-3 border-t border-amber-500/20 text-[11px] font-mono text-amber-300 font-medium">
-                🧠 Sınavdan değil, hayal kırıklığı yaratmaktan korkuyor.
+                Sınavdan değil, hayal kırıklığı yaratmaktan korkuyor.
               </div>
             </div>
           </div>
         </div>
 
-        {/* 2.3 AKICI KAYDIRMA ÇAĞRISI & SATIN ALMA ANKASI */}
+        {/* 2.3 DOĞRUDAN SATIN ALMA ANKASI */}
         <div className="my-6 sm:my-8 text-center">
           <button
             type="button"
             onClick={scrollToCheckout}
-            className="group inline-flex items-center gap-3 px-8 py-4.5 rounded-full bg-gradient-to-r from-gold/20 via-gold/35 to-gold/20 hover:from-gold/30 hover:to-gold/45 border border-gold/50 text-white font-mono text-xs sm:text-sm font-bold uppercase tracking-widest transition-all shadow-[0_0_35px_rgba(212,175,55,0.3)] hover:shadow-[0_0_50px_rgba(212,175,55,0.5)] cursor-pointer active:scale-98 animate-pulse"
+            className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-gold via-gold-shimmer to-gold text-obsidian font-bold text-xs sm:text-sm uppercase tracking-widest transition-all shadow-[0_4px_25px_rgba(212,175,55,0.35)] hover:shadow-[0_8px_35px_rgba(212,175,55,0.55)] cursor-pointer active:scale-98"
           >
-            <Sparkles className="w-4 h-4 text-gold shrink-0" />
-            <span>Doğrudan Çözüm Protokollerine & Satın Almaya İn</span>
-            <ChevronDown className="w-4 h-4 text-gold group-hover:translate-y-1 transition-transform shrink-0" />
+            <span>Çözüm Protokollerine & Satın Almaya İn</span>
+            <ChevronDown className="w-4 h-4 text-obsidian group-hover:translate-y-0.5 transition-transform shrink-0" />
           </button>
-          <p className="text-[11px] text-slate-400 font-mono mt-2.5">
-            Sayfayı aşağı kaydırdığınızda satın alma alanı otomatik olarak ayarlanacaktır ↓
-          </p>
         </div>
 
         {/* ========================================================================= */}
@@ -372,11 +361,11 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
         <div
           ref={checkoutRef}
           id="checkout-dossier"
-          className="my-8 scroll-mt-6 p-6 sm:p-10 rounded-3xl bg-gradient-to-b from-gold/20 via-black/95 to-obsidian border-2 border-gold shadow-[0_25px_80px_rgba(212,175,55,0.35)] relative overflow-hidden"
+          className="my-8 scroll-mt-6 p-6 sm:p-10 rounded-3xl bg-gradient-to-b from-gold/15 via-black/95 to-obsidian border-2 border-gold shadow-[0_20px_70px_rgba(212,175,55,0.3)] relative overflow-hidden"
         >
-          {/* Top Discount Badge */}
+          {/* Top Discount Headline */}
           <div className="text-center mb-6">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-rose-500/25 border border-rose-500/60 text-rose-300 font-mono text-xs sm:text-sm font-bold uppercase tracking-wider mb-2 animate-pulse">
+            <span className="inline-block py-1 text-rose-400 font-mono text-xs sm:text-sm font-bold uppercase tracking-widest border-b border-rose-500/40 mb-3">
               %40 TESTİ TAMAMLAYANLARA ÖZEL İNDİRİM • 15 DAKİKA GEÇERLİ
             </span>
             <h2 className="font-serif text-2xl sm:text-4xl text-white font-medium tracking-tight mb-2">

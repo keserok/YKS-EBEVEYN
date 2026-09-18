@@ -1,30 +1,14 @@
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import BackgroundFx from "./components/BackgroundFx";
-import ProgressBar from "./components/ProgressBar";
-import SplashScreen from "./components/SplashScreen";
-import LeadGate from "./components/LeadGate";
-import StepContainer from "./components/StepContainer";
-import ResultDossier from "./components/ResultDossier";
+import SinglePageDiagnostic from "./components/SinglePageDiagnostic";
 import VaultUnlockFx from "./components/VaultUnlockFx";
 import AdminDashboard from "./components/admin/AdminDashboard";
-import { STEPS_DATA } from "./data/stepsData";
-import { calculatePackage } from "./utils/algorithm";
 import { getStoredLeads, saveLead, updateLeadStatus } from "./utils/storage";
-import { trackPageView, trackLead, trackViewContent, trackQuizStart } from "./utils/metaPixel";
 
 export default function App() {
-  // Current view: 'splash' | 'step' | 'gate' | 'vault_unlock' | 'result' | 'admin'
-  const [currentView, setCurrentView] = useState("splash");
-  const [currentStepIndex, setCurrentStepIndex] = useState(1); // 1 to 7
-
-  // Lead and Form State
-  const [parentName, setParentName] = useState("");
-  const [answers, setAnswers] = useState({});
-
-  // Result Dossier State
-  const [packageResult, setPackageResult] = useState(null);
-  const [leadData, setLeadData] = useState(null);
+  // Current view: 'diagnostic' (Single-page 4-step power funnel) | 'vault_unlock' | 'admin'
+  const [currentView, setCurrentView] = useState("diagnostic");
 
   // Admin Leads State - lazy initialized from localStorage
   const [leads, setLeads] = useState(() => getStoredLeads());
@@ -35,67 +19,19 @@ export default function App() {
     setLeads(updated);
   };
 
-  // Step 0: Splash -> Step 1 (Immediate Quiz Start for maximum completion rate)
-  const handleStartExperience = () => {
-    trackQuizStart();
-    setCurrentStepIndex(1);
-    setCurrentView("step");
-  };
-
-  // Step Answer Selection
-  const handleSelectAnswer = (value) => {
-    setAnswers((prev) => ({
-      ...prev,
-      [currentStepIndex]: value
-    }));
-  };
-
-  // Step Next button handler
-  const handleNextStep = () => {
-    if (currentStepIndex < 7) {
-      setCurrentStepIndex((prev) => prev + 1);
-    } else {
-      // Step 7 complete -> Now transition to LeadGate to capture info before revealing report
-      setCurrentView("gate");
-    }
-  };
-
-  // Step Back button handler
-  const handleBackStep = () => {
-    if (currentStepIndex > 1) {
-      setCurrentStepIndex((prev) => prev - 1);
-    } else {
-      setCurrentView("splash");
-    }
-  };
-
-  // Gate Proceed -> Calculate Score & Reveal Result Dossier
-  const handleGateProceed = ({ parentName, phone, studentBranch }) => {
-    setParentName(parentName);
-
-    const result = calculatePackage(answers);
-    setPackageResult(result);
-
-    const leadInfo = {
-      parentName,
-      agencyName: parentName,
-      phone,
-      studentBranch
-    };
-    setLeadData(leadInfo);
-
-    // Save lead to local storage
+  // Lead save handler from SinglePageDiagnostic
+  const handleSaveLead = ({ parentName, phone, studentBranch, packageResult, answers }) => {
     const now = new Date();
     const timestamp = `${now.toISOString().slice(0, 10)} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
-    
+
     const newLead = {
       id: `lead_${Date.now()}`,
       timestamp,
       agencyName: parentName,
       phone: phone || "Belirtilmemiş",
-      assignedPackage: result.title,
-      packageTier: result.dominantArchetype,
-      deliveryDays: `%${result.scorePercent} Dirayet`,
+      assignedPackage: packageResult.title,
+      packageTier: packageResult.dominantArchetype,
+      deliveryDays: `%${packageResult.scorePercent} Dirayet`,
       status: "Yeni Talep",
       studentBranch,
       answers
@@ -103,13 +39,6 @@ export default function App() {
 
     saveLead(newLead);
     setLeads((prev) => [newLead, ...prev]);
-
-    // Meta Pixel Conversion Events: Lead & ViewContent
-    trackLead({ parentName, studentBranch });
-    trackViewContent({ title: result.title, archetype: result.dominantArchetype });
-
-    // Go to results
-    setCurrentView("result");
   };
 
   // Secret Admin Vault Trigger: 'media' / 'admin' + '0000'
@@ -124,79 +53,24 @@ export default function App() {
     setCurrentView("admin");
   };
 
-  // Restart Quiz
-  const handleRestart = () => {
-    trackPageView();
-    setAnswers({});
-    setCurrentStepIndex(1);
-    setPackageResult(null);
-    setCurrentView("splash");
-  };
-
-  // Current step data
-  const currentStepData = STEPS_DATA.find((s) => s.id === currentStepIndex) || STEPS_DATA[0];
-  const canProceed = Boolean(answers[currentStepIndex] && answers[currentStepIndex].length > 0);
-
   return (
     <div className="relative min-h-screen bg-obsidian text-architectural-white font-sans selection:bg-gold/25 selection:text-gold-light overflow-x-hidden">
-      {/* Dynamic Background FX */}
-      <BackgroundFx currentView={currentView} currentStep={currentStepIndex} />
+      {/* Dynamic Background Atmosphere */}
+      <BackgroundFx currentView={currentView} currentStep={1} />
 
-      {/* Top Progress Bar - Visible in Step Mode */}
-      {currentView === "step" && (
-        <ProgressBar
-          currentStep={currentStepIndex}
-          totalSteps={7}
-          parentName={parentName}
-        />
-      )}
-
-      {/* Main View Flow with Smooth Page Transitions */}
+      {/* Main View Flow */}
       <main className="relative z-10">
         <AnimatePresence mode="wait">
-          {currentView === "splash" && (
+          {currentView === "diagnostic" && (
             <motion.div
-              key="view-splash"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4 }}
-            >
-              <SplashScreen onStart={handleStartExperience} />
-            </motion.div>
-          )}
-
-          {currentView === "step" && (
-            <motion.div
-              key={`view-step-${currentStepIndex}`}
+              key="view-diagnostic"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <StepContainer
-                stepData={currentStepData}
-                currentStepIndex={currentStepIndex}
-                totalSteps={7}
-                selectedAnswer={answers[currentStepIndex]}
-                onSelectAnswer={handleSelectAnswer}
-                onNext={handleNextStep}
-                onBack={handleBackStep}
-                canProceed={canProceed}
-              />
-            </motion.div>
-          )}
-
-          {currentView === "gate" && (
-            <motion.div
-              key="view-gate"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.4 }}
-            >
-              <LeadGate
-                onProceed={handleGateProceed}
+              <SinglePageDiagnostic
+                onSaveLead={handleSaveLead}
                 onSecretAdminTrigger={handleSecretAdminTrigger}
               />
             </motion.div>
@@ -214,22 +88,6 @@ export default function App() {
             </motion.div>
           )}
 
-          {currentView === "result" && packageResult && (
-            <motion.div
-              key="view-result"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <ResultDossier
-                leadData={leadData}
-                packageResult={packageResult}
-                onRestart={handleRestart}
-              />
-            </motion.div>
-          )}
-
           {currentView === "admin" && (
             <motion.div
               key="view-admin"
@@ -241,7 +99,7 @@ export default function App() {
               <AdminDashboard
                 leads={leads}
                 onUpdateStatus={handleUpdateStatus}
-                onClose={() => setCurrentView("splash")}
+                onClose={() => setCurrentView("diagnostic")}
               />
             </motion.div>
           )}
