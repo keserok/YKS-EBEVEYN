@@ -848,7 +848,10 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
       />
 
       {/* 6. STUDIO MOBILE STICKY FLOATING CTA BAR (ui-ux-pro-max) */}
-      <div className="sm:hidden fixed bottom-0 inset-x-0 z-40 px-4 py-3 bg-[#0B0C10]/95 backdrop-blur-2xl border-t border-gold/30 shadow-[0_-12px_40px_rgba(0,0,0,0.9)] flex items-center justify-between gap-3">
+      <div
+        className="sm:hidden fixed bottom-0 inset-x-0 z-40 px-4 pt-3 bg-[#0B0C10]/95 backdrop-blur-2xl border-t border-gold/40 shadow-[0_-12px_45px_rgba(0,0,0,0.95)] flex items-center justify-between gap-3"
+        style={{ paddingBottom: "max(12px, env(safe-area-inset-bottom, 12px))" }}
+      >
         <div className="flex flex-col">
           <div className="flex items-baseline gap-1.5">
             <span className="text-xl font-bold font-serif text-gold-light">
@@ -868,7 +871,7 @@ export default function ResultDossier({ leadData, packageResult, onRestart }) {
           type="button"
           onClick={handleDirectShopierTransfer}
           disabled={isRedirecting}
-          className="py-3 px-5 rounded-xl bg-gradient-to-r from-gold via-gold-shimmer to-gold text-obsidian font-bold text-xs uppercase tracking-wider shadow-[0_4px_25px_rgba(212,175,55,0.45)] active:scale-95 flex items-center gap-2 cursor-pointer shrink-0"
+          className="min-h-[48px] py-2.5 px-6 rounded-xl bg-gradient-to-r from-gold via-gold-shimmer to-gold text-obsidian font-bold text-xs uppercase tracking-wider shadow-[0_4px_25px_rgba(212,175,55,0.45)] active:scale-95 flex items-center justify-center gap-2 cursor-pointer shrink-0 touch-manipulation"
         >
           {isRedirecting ? (
             <>
